@@ -75,7 +75,7 @@ export default function History() {
                         ))}
                     </div>
 
-                    <div className={`flex w-full bg-gradient-to-b from-[#7A5C20] to-[#BFA75A] px-8 md:px-24 border-t-6 md:border-l-6 border-white items-center ${ gridVisible ? "slide-from-right" : "opacity-0" }`}>
+                    <div className={`flex w-full bg-gradient-to-b from-[#7A5C20] to-[#BFA75A] px-8 md:px-24 border-t-6 md:border-t-0 md:border-l-6 border-white items-center ${ gridVisible ? "slide-from-right" : "opacity-0" }`}>
                         <h2 className="text-5xl md:text-7xl font-montserrat text-white text-center md:text-right">El <b>semillero</b> de la <b>Orquesta Sinfónica de Carabobo</b></h2>
                     </div>
                 </div>
@@ -136,7 +136,7 @@ export default function History() {
                         </div>
                     </div>
                     
-                    <div className={`relative w-full border-t-6 md:border-l-6 border-white ${ altGridVisible ? "slide-from-right" : "opacity-0" }`}>
+                    <div className={`relative w-full border-t-6 md:border-t-0 md:border-l-6 border-white ${ altGridVisible ? "slide-from-right" : "opacity-0" }`}>
                         <div className="grid grid-cols-2 gap-1">
                             <div className="flex flex-col gap-1">
                                 <div className="relative">

@@ -165,7 +165,7 @@ export default function Allies() {
                         <a href="/registro" className="flex w-fit items-center md:items-start justify-center md:justify-start bg-[#7A5C20] hover:bg-[#7A5C20]/80 gap-1 px-12 py-[1vh] rounded-full text-lg md:text-2xl font-montserrat text-white font-medium duration-300 cursor-pointer">Inscríbete ya<ChevronRight className="w-8 h-8"></ChevronRight></a>
                     </div> 
                     
-                    <div id="contacto" className={`flex w-full bg-gradient-to-b from-[#4B0C0C] to-[#7A1F1F] border-t-6 md:border-l-6 border-white items-center justify-center ${ gridVisible ? "slide-from-right" : "opacity-0" }`}>
+                    <div id="contacto" className={`flex w-full bg-gradient-to-b from-[#4B0C0C] to-[#7A1F1F] border-t-6 md:border-t-0 md:border-l-6 border-white items-center justify-center ${ gridVisible ? "slide-from-right" : "opacity-0" }`}>
                         <div className="flex flex-col w-[85%] md:w-[60%] bg-white/10 backdrop-blur-md rounded-xl shadow-lg gap-8 px-10 py-6">
                             <h2 className="text-3xl md:text-5xl font-montserrat text-white font-bold text-center md:text-right pt-4 pb-6 border-b border-white/20">¿Quieres contactarnos?</h2>
                             

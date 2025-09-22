@@ -102,7 +102,7 @@ export default function AboutUs() {
 
             <section ref={gridRef} className="relative w-full min-h-300 md:min-h-screen">
                 <div className="absolute inset-0 z-0 w-full grid md:grid-cols-2">
-                    <div className={`flex w-full bg-gradient-to-b from-[#7A5C20] to-[#BFA75A] px-12 md:px-28 border-b-6 md:border-r-6 border-white items-center ${ gridVisible ? "slide-from-left" : "opacity-0" }`}>
+                    <div className={`flex w-full bg-gradient-to-b from-[#7A5C20] to-[#BFA75A] px-12 md:px-28 border-b-6 md:border-b-0 md:border-r-6 border-white items-center ${ gridVisible ? "slide-from-left" : "opacity-0" }`}>
                         <h2 className="text-5xl md:text-7xl font-montserrat text-white text-center md:text-left">El <b>hogar</b> de los <b>músicos</b> del <b>mañana</b></h2>
                     </div>
 
