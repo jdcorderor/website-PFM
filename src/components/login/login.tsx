@@ -56,7 +56,7 @@ export default function LogIn() {
   
   return (
     <section id="login" className="flex flex-col w-full items-center py-12 md:py-36">
-      <div className="w-sm flex flex-col items-center justify-center px-8 py-6 gap-6 border border-gray-200 rounded-2xl">
+      <div className="w-sm flex flex-col items-center justify-center px-8 py-6 gap-6 md:border border-gray-200 rounded-2xl">
         <h1 className="text-2xl font-montserrat text-gray-800 font-bold text-center w-[85%] py-3 border-b border-gray-200">Iniciar sesión</h1>
         <form onSubmit={handleSubmit} className="flex flex-col w-[85%] gap-4">
           <div className="flex flex-col gap-1"> 

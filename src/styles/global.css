@@ -6,6 +6,10 @@ html {
   scroll-behavior: smooth;
 }
 
+section {
+  overflow: hidden;
+}
+
 /* Fonts ------------------------------------------------------------------------------------- */
 
 body {
@@ -60,7 +64,7 @@ body {
 
 @keyframes slideFromLeft {
   0% {
-    transform: translateX(-100%);
+    transform: translateX(-10%);
   }
   100% {
     transform: translateX(0);
@@ -145,7 +149,7 @@ label {
   font-weight: 600;
 }
 
-input {
+input:not([type="date"]) {
   width: 100%;
 }
 

@@ -376,7 +376,7 @@ export default function Administrator() {
 
   return (
     <section id="administrator">
-      <div className="flex flex-col w-[80vw] items-center justify-center py-16 gap-12 mx-auto">
+      <div className="flex flex-col w-[90vw] md:w-[80vw] items-center justify-center py-16 gap-12 mx-auto">
         <div className="flex flex-col w-full gap-6 pb-6 border-b border-gray-200">
           <div className="flex items-center justify-center gap-2">
             <img src="/logo-original.png" alt="Programa de Formación Musical - Maestro José Calabrese" className="w-20 md:w-20 md:h-fit justify-center" />
@@ -394,8 +394,8 @@ export default function Administrator() {
         ) : error ? (
           <p className="text-lg font-montserrat text-gray-700 font-bold text-center w-full">{error}</p>
         ) : (
-          <div className="flex flex-col w-full items-center justify-center overflow-x-auto max-h-[60vh]">
-            <table className="min-w-full divide-y divide-gray-200">
+          <div className="w-full overflow-x-auto max-h-[60vh]">
+            <table className="w-full divide-y divide-gray-200">
               <thead className="bg-gray-100">
                 <tr className="hover:bg-gray-50">
                   <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">Nombre</th>
@@ -418,7 +418,7 @@ export default function Administrator() {
                   students.map((e) => (
                     <tr key={e.id} className="hover:bg-gray-100">
                       <td className="px-4 py-2 text-xs font-montserrat">{e.estudianteNombre}</td>
-                      <td className="px-4 py-2 text-xs font-montserrat">{calculateAge(e.estudianteFechaNacimiento)}</td>
+                      <td className="px-4 py-2 text-xs font-montserrat">{e.estudianteFechaNacimiento ? calculateAge(e.estudianteFechaNacimiento) : "-"}</td>
                       <td className="px-4 py-2 text-xs font-montserrat">{e.estudianteCI || '—'}</td>
                       <td className="px-4 py-2 text-xs font-montserrat">{e.instrumentos || '—'}</td>
                       <td className="px-4 py-2 text-xs font-montserrat">{e.teoricas || '—'}</td>

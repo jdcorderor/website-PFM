@@ -110,14 +110,14 @@ export default function Allies() {
       
     return (
         <section className="flex flex-col w-full">
-            <section id="aliados" ref={ref} className="relative w-full min-h-110 md:min-h-screen md:py-32">
+            <section id="aliados" ref={ref} className="relative w-full min-h-110 md:min-h-screen py-24 md:py-32">
                 <div className="absolute inset-0 z-0 w-full bg-gradient-to-b from-[#4B0C0C] to-[#7A1F1F] border-t-6 border-white"></div>
                     
                 <div className="relative inset-0 z-10 flex flex-col w-[85vw] gap-12 mx-auto">
                     <div className="flex flex-col gap-10">
-                        <h2 className={`md:text-5xl font-montserrat text-white font-bold text-center ${ firstVisible ? "slide-from-bottom" : "opacity-0" }`}>Nuestros aliados</h2>
+                        <h2 className={`text-3xl md:text-5xl font-montserrat text-white font-bold text-center ${ firstVisible ? "slide-from-bottom" : "opacity-0" }`}>Nuestros aliados</h2>
                         
-                        <div className="flex flex-col md:w-[75%] gap-6 mx-auto">
+                        <div className="flex flex-col w-[80%] md:w-[75%] gap-6 mx-auto">
                             <div className={`w-full mx-auto ${ firstVisible ? "slide-from-bottom" : "opacity-0" }`}>
                                 <Swiper loop={true} autoplay={{ delay: 3000 }} breakpoints={{ 480: { slidesPerView: 1, spaceBetween: 15 }, 768: { slidesPerView: 1, spaceBetween: 20 }, 1024: { slidesPerView: 4, spaceBetween: 24 }, 1280: { slidesPerView: 4, spaceBetween: 24 } }} className="w-full">
                                     {group1.map((item, index) => (
@@ -158,16 +158,16 @@ export default function Allies() {
                 </div>
             </section>
             
-            <section ref={gridRef} className="relative w-full md:min-h-screen border-y-6 border-white">
+            <section ref={gridRef} className="relative w-full min-h-300 md:min-h-screen border-y-6 border-white">
                 <div className="absolute inset-0 z-0 w-full grid md:grid-cols-2">
-                    <div className={`flex flex-col w-full bg-gradient-to-b from-[#7A5C20] to-[#BFA75A] gap-12 px-24 items-start justify-center ${ gridVisible ? "slide-from-left" : "opacity-0" }`}>
-                        <h2 className="md:text-7xl font-montserrat text-white text-left"><b>¿Quieres formar parte del programa?</b></h2>
-                        <a href="/registro" className="flex w-fit items-start justify-start bg-[#7A5C20] hover:bg-[#7A5C20]/80 gap-1 px-12 py-[1vh] rounded-full md:text-2xl font-montserrat text-white font-medium duration-300 cursor-pointer">Inscríbete ya<ChevronRight className="w-8 h-8"></ChevronRight></a>
+                    <div className={`flex flex-col w-full bg-gradient-to-b from-[#7A5C20] to-[#BFA75A] gap-12 px-12 md:px-24 items-center md:items-start justify-center ${ gridVisible ? "slide-from-left" : "opacity-0" }`}>
+                        <h2 className="text-5xl md:text-7xl font-montserrat text-white text-center md:text-left"><b>¿Quieres formar parte del programa?</b></h2>
+                        <a href="/registro" className="flex w-fit items-center md:items-start justify-center md:justify-start bg-[#7A5C20] hover:bg-[#7A5C20]/80 gap-1 px-12 py-[1vh] rounded-full text-lg md:text-2xl font-montserrat text-white font-medium duration-300 cursor-pointer">Inscríbete ya<ChevronRight className="w-8 h-8"></ChevronRight></a>
                     </div> 
                     
-                    <div id="contacto" className={`flex w-full bg-gradient-to-b from-[#4B0C0C] to-[#7A1F1F] border-l-6 border-white items-center justify-center ${ gridVisible ? "slide-from-right" : "opacity-0" }`}>
-                        <div className="flex flex-col w-[60%] bg-white/10 backdrop-blur-md rounded-xl shadow-lg gap-8 px-10 py-6">
-                            <h2 className="md:text-5xl font-montserrat text-white font-bold text-right pt-4 pb-6 border-b border-white/20">¿Quieres contactarnos?</h2>
+                    <div id="contacto" className={`flex w-full bg-gradient-to-b from-[#4B0C0C] to-[#7A1F1F] border-t-6 md:border-l-6 border-white items-center justify-center ${ gridVisible ? "slide-from-right" : "opacity-0" }`}>
+                        <div className="flex flex-col w-[85%] md:w-[60%] bg-white/10 backdrop-blur-md rounded-xl shadow-lg gap-8 px-10 py-6">
+                            <h2 className="text-3xl md:text-5xl font-montserrat text-white font-bold text-center md:text-right pt-4 pb-6 border-b border-white/20">¿Quieres contactarnos?</h2>
                             
                             <form onSubmit={ handleSubmit } className="w-full max-w-xl mx-auto text-sm font-montserrat text-gray-200 tracking-wide space-y-4">
                                 <div className="relative">

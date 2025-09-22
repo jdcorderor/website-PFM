@@ -231,6 +231,11 @@ export default function Registration() {
   }, [data]);
   
   // ----------------------------------------------------------------------------------------------
+
+  // OS detector
+  const isApple = typeof navigator !== "undefined" && /Mac|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  // ----------------------------------------------------------------------------------------------
   
   // RIF validator
   const validateRIF = (rif: string) => {
@@ -420,7 +425,7 @@ export default function Registration() {
 
   return (
     <section id="inscripción" className="w-full overflow-hidden bg-white py-12">
-        <div className="flex flex-col md:w-[55%] gap-6 py-12 mx-auto mb-12 bg-white border border-gray-200 rounded-3xl">
+        <div className="flex flex-col w-[90%] md:w-[55%] gap-6 py-12 mx-auto mb-12 bg-white border border-gray-200 rounded-3xl">
             <div className="flex flex-col gap-8">
                 <div className="flex w-full items-center justify-center">
                     <div className="flex items-center justify-center gap-2">
@@ -431,16 +436,16 @@ export default function Registration() {
 
                 <div className="flex flex-col gap-1">
                     <h1 className="md:text-xl font-montserrat font-medium text-center">Programa de Formación Musical</h1>
-                    <h2 className="md:text-3xl font-montserrat font-bold text-center">Maestro José Calabrese</h2>
+                    <h2 className="text-xl md:text-3xl font-montserrat font-bold text-center">Maestro José Calabrese</h2>
                 </div>
                 <p className="md:text-lg font-montserrat font-semibold text-center">Planilla de Inscripción</p>
             </div>
 
-            <form onSubmit={ handleSubmit } className="flex flex-col md:w-[80%] items-center justify-center gap-4 mx-auto">
+            <form onSubmit={ handleSubmit } className="flex flex-col w-[90%] md:w-[80%] items-center justify-center gap-6 md:gap-4 mx-auto">
 
                 {/* -------------------- Estudiante -------------------- */}
 
-                <h3 className="font-montserrat font-medium text-left w-full pt-8 pb-2 mt-4 border-t border-gray-200">Datos del Estudiante</h3>
+                <h3 className="font-montserrat font-medium text-center md:text-left w-full pt-8 pb-2 mt-4 border-t border-gray-200">Datos del Estudiante</h3>
 
                 {/* Foto */}
                 <div className="flex flex-col items-center justify-center w-[40%] gap-4 mb-4 imagen">
@@ -482,7 +487,7 @@ export default function Registration() {
                 </div>
 
                 {/* Fecha de nacimiento y edad */}
-                <div className="flex gap-6">
+                <div className="flex flex-col md:flex-row gap-6">
                     <div className="flex flex-col gap-1">
                         <label>Fecha de Nacimiento *</label>
                         <input
@@ -513,6 +518,7 @@ export default function Registration() {
                                     setEsMenor(false);
                                 }
                             }}
+                            className={`${isApple ? "h-9" : "w-full"}`}
                         />
                     </div>
                     
@@ -529,13 +535,14 @@ export default function Registration() {
                 </div>
 
                 {/* Género y cédula de identidad */}
-                <div className="flex gap-6">
+                <div className="flex flex-col md:flex-row gap-6">
                     <div className="flex flex-col gap-1">
                         <label>Género *</label>
                         <select
                             required
                             value={ estudianteGenero || "" }
                             onChange={(e) => setEstudianteGenero(e.target.value)}
+                            className="h-9"
                         >
                             <option value="" disabled>Seleccione una opción</option>
                             <option value="Masculino">Masculino</option>
@@ -557,7 +564,7 @@ export default function Registration() {
                 </div>
 
                 {/* Teléfono y RIF */}
-                <div className="flex gap-6">
+                <div className="flex flex-col md:flex-row gap-6">
                     <div className="flex flex-col gap-1">
                         <label>Teléfono Celular *</label>
                         <div className="flex gap-2">
@@ -605,7 +612,7 @@ export default function Registration() {
                 </div>
 
                 {/* Institución educativa y ocupación */}
-                <div className="flex gap-6">
+                <div className="flex flex-col md:flex-row gap-6">
                     <div className="flex flex-col gap-1">
                         <label>Institución Educativa</label>
                         <input
@@ -626,7 +633,7 @@ export default function Registration() {
                 </div>
 
                 {/* Profesión y lugar de trabajo */}
-                <div className="flex gap-6">
+                <div className="flex flex-col md:flex-row gap-6">
                     <div className="flex flex-col gap-1">
                         <label>Profesión</label>
                         <input
@@ -647,7 +654,7 @@ export default function Registration() {
                 </div>
 
                 {/* Dirección residencial y correo electrónico */}
-                <div className="flex gap-6">
+                <div className="flex flex-col md:flex-row gap-6">
                     <div className="flex flex-col gap-1">
                         <label>Dirección Residencial *</label>
                         <input
@@ -682,11 +689,11 @@ export default function Registration() {
                 </div>
 
                 {/* Antecedentes médicos/psicológicos */}
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 h-12">
                     <label>Antecedentes (médicos, psicológicos) *</label>
 
-                    <div className="flex gap-6">
-                        <label className="flex items-center gap-1 font-montserrat text-[0.8rem] font-semibold">
+                    <div className="flex flex-row gap-8">
+                        <label className="flex items-center gap-[0.2rem] font-montserrat text-[0.8rem] font-semibold">
                             <input
                                 type="radio"
                                 name="antecedentes"
@@ -697,7 +704,7 @@ export default function Registration() {
                             <span>Sí</span>
                         </label>
 
-                        <label className="flex items-center gap-1 font-montserrat text-[0.8rem] font-semibold">
+                        <label className="flex items-center gap-[0.1rem] font-montserrat text-[0.8rem] font-semibold">
                             <input
                                 type="radio"
                                 name="antecedentes"
@@ -760,7 +767,7 @@ export default function Registration() {
 
                 {/* -------------------- Representante legal -------------------- */}
 
-                <h3 className="font-montserrat font-medium text-left w-full pt-8 pb-2 mt-4 border-t border-gray-200">Datos del Representante Legal</h3>
+                <h3 className="font-montserrat font-medium text-center md:text-left w-full pt-8 pb-2 mt-4 border-t border-gray-200">Datos del Representante Legal</h3>
 
                 {/* Nombres y apellidos */}
                 <div className="flex flex-col gap-1">
@@ -774,7 +781,7 @@ export default function Registration() {
                 </div>
 
                 {/* Cédula de identidad y parentesco */}
-                <div className="flex gap-6">
+                <div className="flex flex-col md:flex-row gap-6">
                     <div className="flex flex-col gap-1">
                         <label>Cédula de Identidad {esMenor ? "*" : ""}</label>
                         <input
@@ -800,7 +807,7 @@ export default function Registration() {
                 </div>
 
                 {/* Teléfono y ocupación */}
-                <div className="flex gap-6">
+                <div className="flex flex-col md:flex-row gap-6">
                     <div className="flex flex-col gap-1">
                         <label>Teléfono Celular {esMenor ? "*" : ""}</label>
                         <div className="flex gap-2">
@@ -842,7 +849,7 @@ export default function Registration() {
                 </div>
 
                 {/* Profesión y lugar de trabajo */}
-                <div className="flex gap-6">
+                <div className="flex flex-col md:flex-row gap-6">
                     <div className="flex flex-col gap-1">
                         <label>Profesión {esMenor ? "*" : ""}</label>
                         <input
@@ -876,7 +883,7 @@ export default function Registration() {
                 </div>
 
                 {/* RIF y correo electrónico */}
-                <div className="flex gap-6">
+                <div className="flex flex-col md:flex-row gap-6">
                     <div className="flex flex-col gap-1">
                         <label>Registro de Información Fiscal (RIF) {esMenor ? "*" : ""}</label>
                         <input
@@ -910,7 +917,7 @@ export default function Registration() {
 
                 {/* -------------------- Cátedras -------------------- */}
 
-                <h3 className="font-montserrat font-medium text-left w-full pt-8 pb-2 mt-4 border-t border-gray-200">Cátedras a Inscribir</h3>
+                <h3 className="font-montserrat font-medium text-center md:text-left w-full pt-8 pb-2 mt-4 border-t border-gray-200">Cátedras a Inscribir</h3>
 
                 {(() => {
                     return (
@@ -1074,15 +1081,15 @@ export default function Registration() {
 
                 {/* -------------------- Autorización -------------------- */}
 
-                <h3 className="font-montserrat font-medium text-left w-full pt-8 pb-2 mt-4 border-t border-gray-200">Autorización</h3>
+                <h3 className="font-montserrat font-medium text-center md:text-left w-full pt-8 pb-2 mt-4 border-t border-gray-200">Autorización</h3>
 
                 <p className="md:text-sm font-montserrat font-medium text-justify">
                     Autorizo a la Fundación Orquesta Sinfónica de Carabobo a hacer uso del material fotográfico y audiovisual de las actividades académicas y artísticas que se lleven a cabo durante el desarrollo del Programa de Formación Musical. Las imágenes podrán ser usadas para la difusión en medios de comunicación y redes sociales. *
                 </p>
 
                 <div className="flex flex-col gap-2">
-                    <div className="flex gap-6">
-                        <label className="flex items-center gap-1 font-montserrat text-[0.8rem] font-semibold">
+                    <div className="flex flex-row gap-8">
+                        <label className="flex items-center gap-[0.2rem] font-montserrat text-[0.8rem] font-semibold">
                         <input
                             type="radio"
                             name="autorizacion"
@@ -1093,7 +1100,7 @@ export default function Registration() {
                         <span>Sí</span>
                         </label>
 
-                        <label className="flex items-center gap-1 font-montserrat text-[0.8rem] font-semibold">
+                        <label className="flex items-center gap-[0.1rem] font-montserrat text-[0.8rem] font-semibold">
                         <input
                             type="radio"
                             name="autorizacion"

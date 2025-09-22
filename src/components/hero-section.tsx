@@ -110,9 +110,9 @@ export default function HeroSection() {
       {/* Content */}
       <div className="relative inset-0 z-10 top-5 md:top-30 flex flex-col w-[85vw] gap-4 md:gap-6 mx-auto">
         <h1 className={`font-montserrat text-white text-center md:leading-[4rem] ${ titleVisible ? "slide-from-bottom" : "opacity-0" }`}>
-          <span className="text-2xl md:text-5xl font-light">Programa de Formación Musical</span> <br /> <span className="text-3xl md:text-6xl bg-clip-text text-transparent bg-white font-bold ">Maestro José Calabrese</span>
+          <span className="text-xl md:text-5xl font-light">Programa de Formación Musical</span> <br /> <span className="text-4xl md:text-6xl bg-clip-text text-transparent bg-white font-bold ">Maestro José Calabrese</span>
         </h1>
-        <p className={`text-lg md:text-3xl font-montserrat text-white text-center px-6 md:px-0 ${ phraseVisible ? "slide-from-bottom" : "opacity-0" }`}>
+        <p className={`text-base md:text-3xl font-montserrat text-white text-center px-6 md:px-0 ${ phraseVisible ? "slide-from-bottom" : "opacity-0" }`}>
           <i>Desde el corazón de Carabobo, resonando con historia y pasión</i>
         </p>
         <div className={`flex justify-center gap-2 my-4 md:my-8 ${ buttonsVisible ? "slide-from-bottom" : "opacity-0" }`}>
