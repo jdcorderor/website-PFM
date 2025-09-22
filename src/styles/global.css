@@ -1,0 +1,160 @@
+@import "tailwindcss";
+
+/* General styles ---------------------------------------------------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Fonts ------------------------------------------------------------------------------------- */
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.font-montserrat {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.font-inter {
+  font-family: 'Inter', serif;
+}
+
+/* Fade in animation ------------------------------------------------------------------------- */
+
+.fade-in {
+  animation: fadeIn 1s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Slide in from right ------------------------------------------------------------------------- */
+
+.slide-from-right {
+  animation: slideFromRight 0.8s ease-out forwards;
+}
+
+@keyframes slideFromRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Slide in from left ------------------------------------------------------------------------- */
+
+.slide-from-left {
+  animation: slideFromLeft 0.8s ease-out forwards;
+}
+
+@keyframes slideFromLeft {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Slide in from bottom ------------------------------------------------------------------------- */
+
+.slide-from-bottom {
+  animation: slideFromBottom 0.8s ease-out forwards;
+}
+
+@keyframes slideFromBottom {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Loading view ------------------------------------------------------------------------------ */
+
+.dots-container-loading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dot-loading {
+  width: 3vh;
+  height: 3vh;
+  border-radius: 50%;
+  margin-right: 10px;
+  background-color: #84c1fe;
+  animation: pulse 1.2s infinite ease-in-out;
+}
+
+.dot-loading:last-child {
+  margin-right: 0;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+}
+
+/* Top fade ------------------------------------------------------------------------------ */
+
+.top-fade {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 20%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 20%);
+}
+
+.bottom-fade::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  pointer-events: none;
+}
+
+/* Forms ------------------------------------------------------------------------------ */
+
+form div:not(.imagen) {
+  width: 100%;
+}
+
+label {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+}
+
+input:not([type="radio"], .peer), select {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  padding: 0.6em 1em;
+  border: 1px solid #d0cfcf;
+  border-radius: 0.5rem;
+  background-color: white;
+  outline: none;
+}
