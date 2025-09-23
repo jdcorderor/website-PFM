@@ -4,31 +4,13 @@ import { v4 as uuid } from "uuid";
 
 import { pdf } from '@react-pdf/renderer';
 import PDF from '../pdf/pdf';
+import { catedraApi, aspiranteApi, type Catedra, type AspiranteRequest } from '../../lib/api';
 
 // Interface for subjects selection
 interface Campo {
     id: string,
     valor: string,
 }
-
-// Mock data
-const data = {
-    message: 'OK',
-    data: [
-      { nombre: 'Piano I', id: 1, tipo: 'instrumento' },
-      { nombre: 'Guitarra Clásica II', id: 2, tipo: 'instrumento' },
-      { nombre: 'Armonía Funcional', id: 3, tipo: 'teorica' },
-      { nombre: 'Historia de la Música', id: 4, tipo: 'teorica' },
-      { nombre: 'Ensamble Jazz', id: 5, tipo: 'grupal' },
-      { nombre: 'Coral Polifónica', id: 6, tipo: 'grupal' },
-      { nombre: 'Taller de Improvisación', id: 7, tipo: 'grupal' },
-    ],
-    grupales: [
-      { nombre: 'Orquesta Juvenil', id: 8 },
-      { nombre: 'Grupo de Cámara', id: 9 },
-      { nombre: 'Laboratorio de Ritmo', id: 10 },
-    ],
-};
 
 export default function Registration() {
   // State variables for error/modal's management
@@ -188,39 +170,43 @@ export default function Registration() {
   
   // Get subjects using fetch
   useEffect(() => {
-    if (hasFetched.current || !data) return;
+    if (hasFetched.current) return;
   
     const fetchSubjects = async () => {
       try {
-        // const response = await fetch(`/api/catedras`);
-        // const data = await response.json();
+        const response = await catedraApi.getAll();
+        
+        if (response.data) {
+          const instrumentos: string[] = [];
+          const teoricas: string[] = [];
+          const otros: string[] = [];
   
-        const instrumentos: string[] = [];
-        const teoricas: string[] = [];
-        const otros: string[] = [];
-  
-        data?.data?.forEach((item: any) => {
-          switch (item.tipo) {
-            case "instrumento":
-              instrumentos.push(item.nombre);
-              break;
-            case "teorica":
-              teoricas.push(item.nombre);
-              break;
-            case "grupal":
-            default:
-              otros.push(item.nombre);
-              break;
+          // Process catedras from 'data' field
+          response.data.forEach((item: Catedra) => {
+            switch (item.tipo) {
+              case "instrumento":
+                instrumentos.push(item.nombre);
+                break;
+              case "teorica":
+                teoricas.push(item.nombre);
+                break;
+              case "grupal":
+                otros.push(item.nombre);
+                break;
+            }
+          });
+
+          // Process grupales from 'grupales' field
+          if (response.grupales) {
+            response.grupales.forEach((grupal) => {
+              otros.push(grupal.nombre);
+            });
           }
-        });
   
-        data?.grupales?.forEach((catedra: any) => {
-          otros.push(catedra.nombre);
-        });
-  
-        setListadoInstrumentos(instrumentos);
-        setListadoTeoricas(teoricas);
-        setListadoOtros(otros);
+          setListadoInstrumentos(instrumentos);
+          setListadoTeoricas(teoricas);
+          setListadoOtros(otros);
+        }
       } catch (err) {
         console.error("Error al obtener cátedras:", err);
       }
@@ -228,7 +214,7 @@ export default function Registration() {
   
     fetchSubjects();
     hasFetched.current = true;
-  }, [data]);
+  }, []);
   
   // ----------------------------------------------------------------------------------------------
 
@@ -347,57 +333,52 @@ export default function Registration() {
         var telefonoEmergencia = estudianteCodigoTelefonoEmergencia + estudianteTelefonoEmergencia;
       }
       
-      const res = await fetch("/api/aspirante", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          estudianteNombre: estudianteNombre || "",
-          estudianteFechaNacimiento: estudianteFechaNacimiento || "",
-          estudianteGenero: estudianteGenero || "",
-          estudianteCI: estudianteCI || "",
-          estudianteRIF: estudianteRIF || "",
-          estudianteTelefono: telefonoEstudiante,
-          estudianteInstitucion: estudianteInstitucion || "",
-          estudianteOcupacion: estudianteOcupacion || "",
-          estudianteProfesion: estudianteProfesion || "",
-          estudianteLugarTrabajo: estudianteLugarTrabajo || "",
-          estudianteEmail: estudianteEmail || "",
-          estudianteDireccion: estudianteDireccion || "",
-          estudianteAlergias: estudianteAlergias || "",
-          estudianteAntecedentes: estudianteAntecedentes || "",
-          estudianteAlergiasEspecificadas: estudianteAlergiasEspecificadas || "",
-          estudianteContactoEmergencia: estudianteContactoEmergencia || "",
-          estudianteTelefonoContactoEmergencia: telefonoEmergencia,
-          
-          representanteNombre: representanteNombre || "",
-          representanteCI: representanteCI || "",
-          representanteRIF: representanteRIF || "",
-          representanteParentesco: representanteParentesco || "",
-          representanteTelefono: telefonoRepresentante,
-          representanteOcupacion: representanteOcupacion || "",
-          representanteProfesion: representanteProfesion || "",
-          representanteLugarTrabajo:representanteLugarTrabajo || "",
-          representanteDireccion: representanteDireccion || "",
-          representanteEmail: representanteEmail || "",
-          
-          instrumentos: instrumentosData || "",
-          teoricas: teoricasData || "",
-          otros: otrosData || "",
-          autorizacion: autorizacion || "",
-        }),
-      })
+      const aspiranteData: AspiranteRequest = {
+        nombre: estudianteNombre || "",
+        genero: estudianteGenero || "",
+        cedula: estudianteCI || "",
+        fecha_nacimiento: estudianteFechaNacimiento || "",
+        correo_electronico: estudianteEmail || "",
+        direccion: estudianteDireccion || "",
+        telefono_estudiantes: telefonoEstudiante,
+        rif: estudianteRIF || "",
+        institucion_educacional: estudianteInstitucion || "",
+        ocupacion: estudianteOcupacion || "",
+        profesion: estudianteProfesion || "",
+        lugar_trabajo: estudianteLugarTrabajo || "",
+        alergico_a: estudianteAlergias || "",
+        antecedentes: estudianteAntecedentes || "",
+        especificacion_antecedentes: estudianteAlergiasEspecificadas || "",
+        nombre_emergencia: estudianteContactoEmergencia || "",
+        numero_emergencia: telefonoEmergencia,
+        
+        nombre_representante: representanteNombre || "",
+        cedula_representante: representanteCI || "",
+        parentesco: representanteParentesco || "",
+        telefono_representante: telefonoRepresentante,
+        ocupacion_representante: representanteOcupacion || "",
+        profesion_representante: representanteProfesion || "",
+        lugar_trabajo_representante: representanteLugarTrabajo || "",
+        direccion_representante: representanteDireccion || "",
+        rif_representante: representanteRIF || "",
+        email_representante: representanteEmail || "",
+        
+        instrumentos: instrumentosData || "",
+        teoricas: teoricasData || "",
+        otros: otrosData || "",
+        autorizacion: autorizacion === "Sí" || autorizacion === "Si",
+      };
 
-      const results = await res.json();
+      const response = await aspiranteApi.create(aspiranteData);
       
-      if (!res.ok) {
-        console.log(`Error: ${results.message}`)
+      if (response.message && response.id) {
+        alert("Inscripción enviada exitosamente. Será contactado pronto.");
+      } else {
         alert("Ha ocurrido un error. Por favor, intente nuevamente más tarde.");
-        return
       }
     } catch (error) {
-      console.error(error);
+      console.error("Registration error:", error);
+      alert("Ha ocurrido un error. Por favor, intente nuevamente más tarde.");
     }
   }
 
@@ -1138,15 +1119,15 @@ export default function Registration() {
                                     Volver
                                 </button>
 
-                                <button
-                                    onClick={() => {
-                                        setShowModal(false);
-                                        // handleRegistration();
-                                    }}
-                                    className="px-4 py-2 text-sm font-montserrat font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition duration-200"
-                                >
-                                    Continuar
-                                </button>
+                <button
+                    onClick={() => {
+                        setShowModal(false);
+                        handleRegistration();
+                    }}
+                    className="px-4 py-2 text-sm font-montserrat font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md transition duration-200"
+                >
+                    Continuar
+                </button>
                             </div>
                         </div>
                     </div>

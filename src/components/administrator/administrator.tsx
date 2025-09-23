@@ -3,45 +3,7 @@ import { Eye, Check, X } from "lucide-react";
 
 import { pdf } from '@react-pdf/renderer';
 import PDF from '../pdf/pdf';
-
-// Interface for applicant data (photoURL missing)
-export interface Estudiante {
-  id: number;
-  estudianteNombre: string;
-  estudianteFechaNacimiento: string;
-  estudianteGenero: string;
-  estudianteCI: string;
-  estudianteRIF: string;
-  estudianteTelefono: string;
-  estudianteInstitucion: string;
-  estudianteOcupacion: string;
-  estudianteProfesion: string;
-  estudianteLugarTrabajo: string;
-  estudianteEmail: string;
-  estudianteDireccion: string;
-  estudianteAlergias: string;
-  estudianteAntecedentes: string;
-  estudianteAlergiasEspecificadas: string;
-  estudianteContactoEmergencia: string;
-  estudianteTelefonoContactoEmergencia: string;
-
-  representanteNombre: string;
-  representanteCI: string;
-  representanteRIF: string;
-  representanteParentesco: string;
-  representanteTelefono: string;
-  representanteOcupacion: string;
-  representanteProfesion: string;
-  representanteLugarTrabajo: string;
-  representanteDireccion: string;
-  representanteEmail: string;
-
-  instrumentos: string;
-  teoricas: string;
-  otros: string;
-  autorizacion: string;
-  estado: number; // REVISAR
-}
+import { listaEsperaApi, estudianteApi, userApi, type ListaEsperaItem } from '../../lib/api';
 
 // ------------------------------------------------------------------
 
@@ -66,124 +28,10 @@ const calculateAge = (date: string) => {
 
 // ------------------------------------------------------------------
 
-// Mock data
-export const estudiantes: Estudiante[] = [
-  {
-    id: 1,
-    estudianteNombre: "María Fernanda López",
-    estudianteFechaNacimiento: "15/04/2005",
-    estudianteGenero: "Femenino",
-    estudianteCI: "31548963",
-    estudianteRIF: "V315489630",
-    estudianteTelefono: "0414-1234567",
-    estudianteInstitucion: "U.E. Colegio San Gabriel",
-    estudianteOcupacion: "Estudiante",
-    estudianteProfesion: "",
-    estudianteLugarTrabajo: "",
-    estudianteEmail: "marialopez@gmail.com",
-    estudianteDireccion: "Av. Bolívar Norte, Naguanagua",
-    estudianteAlergias: "Sí",
-    estudianteAntecedentes: "Asma infantil",
-    estudianteAlergiasEspecificadas: "Polvo, ácaros",
-    estudianteContactoEmergencia: "Ana López",
-    estudianteTelefonoContactoEmergencia: "0412-7654321",
-
-    representanteNombre: "Ana López",
-    representanteCI: "15489632",
-    representanteRIF: "V154896320",
-    representanteParentesco: "Madre",
-    representanteTelefono: "0412-7654321",
-    representanteOcupacion: "Docente",
-    representanteProfesion: "Educadora",
-    representanteLugarTrabajo: "U.E. Colegio San Gabriel",
-    representanteDireccion: "Av. Bolívar Norte, Naguanagua",
-    representanteEmail: "analopez@gmail.com",
-
-    instrumentos: "Violín",
-    teoricas: "Solfeo básico",
-    otros: "Participación en coral",
-    autorizacion: "Sí",
-    estado: 1
-  },
-  {
-    id: 2,
-    estudianteNombre: "Carlos Eduardo Márquez",
-    estudianteFechaNacimiento: "22/09/2005",
-    estudianteGenero: "Masculino",
-    estudianteCI: "31321478",
-    estudianteRIF: "V313214780",
-    estudianteTelefono: "0426-9876543",
-    estudianteInstitucion: "Liceo Bolivariano Carabobo",
-    estudianteOcupacion: "Estudiante",
-    estudianteProfesion: "",
-    estudianteLugarTrabajo: "",
-    estudianteEmail: "carlosmarquez@gmail.com",
-    estudianteDireccion: "Sector La Entrada, Naguanagua",
-    estudianteAlergias: "No",
-    estudianteAntecedentes: "Ninguno",
-    estudianteAlergiasEspecificadas: "",
-    estudianteContactoEmergencia: "Luis Márquez",
-    estudianteTelefonoContactoEmergencia: "0416-3344556",
-
-    representanteNombre: "Luis Márquez",
-    representanteCI: "12457896",
-    representanteRIF: "V124578960",
-    representanteParentesco: "Padre",
-    representanteTelefono: "0416-3344556",
-    representanteOcupacion: "Ingeniero",
-    representanteProfesion: "Civil",
-    representanteLugarTrabajo: "Constructora Carabobo",
-    representanteDireccion: "Sector La Entrada, Naguanagua",
-    representanteEmail: "luismarquez@gmail.com",
-
-    instrumentos: "Guitarra",
-    teoricas: "Armonía intermedia",
-    otros: "Taller de composición",
-    autorizacion: "Sí",
-    estado: 1
-  },
-  {
-    id: 3,
-    estudianteNombre: "Valentina Ríos",
-    estudianteFechaNacimiento: "03/12/2006",
-    estudianteGenero: "Femenino",
-    estudianteCI: "32965412",
-    estudianteRIF: "V329654120",
-    estudianteTelefono: "0412-1122334",
-    estudianteInstitucion: "U.E. Nuestra Señora del Rosario",
-    estudianteOcupacion: "Estudiante",
-    estudianteProfesion: "",
-    estudianteLugarTrabajo: "",
-    estudianteEmail: "valentinarios@gmail.com",
-    estudianteDireccion: "Urbanización El Trigal, Valencia",
-    estudianteAlergias: "Sí",
-    estudianteAntecedentes: "Dermatitis",
-    estudianteAlergiasEspecificadas: "Frutos secos",
-    estudianteContactoEmergencia: "Carmen Ríos",
-    estudianteTelefonoContactoEmergencia: "0416-9988776",
-
-    representanteNombre: "Carmen Ríos",
-    representanteCI: "16543278",
-    representanteRIF: "V165432780",
-    representanteParentesco: "Madre",
-    representanteTelefono: "0416-9988776",
-    representanteOcupacion: "Administradora",
-    representanteProfesion: "Contadora Pública",
-    representanteLugarTrabajo: "Alcaldía de Valencia",
-    representanteDireccion: "Urbanización El Trigal, Valencia",
-    representanteEmail: "carmenrios@gmail.com",
-
-    instrumentos: "Piano",
-    teoricas: "Lectura musical avanzada",
-    otros: "Participación en ensamble",
-    autorizacion: "Sí",
-    estado: 1
-  }
-];
 
 export default function Administrator() {
   // State variable for students data
-  const [students, setStudents] = useState<Estudiante[]>([]);
+  const [students, setStudents] = useState<ListaEsperaItem[]>([]);
 
   // State variable for loading view management
   const [loading, setLoading] = useState<boolean>(true);
@@ -202,53 +50,63 @@ export default function Administrator() {
 
   // Get applicants data using fetch (wait-list)
   useEffect(() => {
-    try {
-      setLoading(true);
-      setTimeout(() => {
-        setStudents(estudiantes.filter((e) => e.estado === 1));
+    const fetchWaitList = async () => {
+      try {
+        setLoading(true);
+        const response = await listaEsperaApi.getAll();
+        
+        if (response.data) {
+          // Your Laravel controller already filters by estado = 1
+          setStudents(response.data);
+        } else {
+          setStudents([]);
+        }
+      } catch (error) {
+        console.error("Error al cargar la lista de espera:", error);
+        setError("Error al cargar la lista de espera.");
+      } finally {
         setLoading(false);
-      }, 3000);
-    } catch(error) {
-      console.error("Error al cargar la lista de espera:", error);
-      setError("Error al cargar la lista de espera.");
-    }
+      }
+    };
+
+    fetchWaitList();
   }, []);
 
   // ------------------------------------------------------------------
 
   // PDF generation handler
-  const handleGeneratePDF = async (e: Estudiante): Promise<void> => {
+  const handleGeneratePDF = async (e: ListaEsperaItem): Promise<void> => {
     try {
       const body = {
         photoURL: "",
-        estudianteNombre: e.estudianteNombre || "",
-        estudianteFechaNacimiento: e.estudianteFechaNacimiento || "",
-        estudianteGenero: e.estudianteGenero || "",
-        estudianteCI: e.estudianteCI || "",
-        estudianteRIF: e.estudianteRIF || "",
-        estudianteTelefono: e.estudianteTelefono,
-        estudianteInstitucion: e.estudianteInstitucion || "",
-        estudianteOcupacion: e.estudianteOcupacion || "",
-        estudianteProfesion: e.estudianteProfesion || "",
-        estudianteLugarTrabajo: e.estudianteLugarTrabajo || "",
-        estudianteEmail: e.estudianteEmail || "",
-        estudianteDireccion: e.estudianteDireccion || "",
-        estudianteAlergias: e.estudianteAlergias || "",
-        estudianteAntecedentes: e.estudianteAntecedentes || "",
-        estudianteAlergiasEspecificadas: e.estudianteAlergiasEspecificadas || "",
-        estudianteContactoEmergencia: e.estudianteContactoEmergencia || "",
-        estudianteTelefonoContactoEmergencia: e.estudianteTelefonoContactoEmergencia,
+        estudianteNombre: e.nombre || "",
+        estudianteFechaNacimiento: e.fecha_nacimiento || "",
+        estudianteGenero: e.genero || "",
+        estudianteCI: e.cedula || "",
+        estudianteRIF: e.rif || "",
+        estudianteTelefono: e.telefono || "",
+        estudianteInstitucion: e.institucion_educacional || "",
+        estudianteOcupacion: e.ocupacion || "",
+        estudianteProfesion: e.profesion || "",
+        estudianteLugarTrabajo: e.lugar_trabajo || "",
+        estudianteEmail: e.email || "",
+        estudianteDireccion: e.direccion || "",
+        estudianteAlergias: e.alergico_a || "",
+        estudianteAntecedentes: e.antecedentes || "",
+        estudianteAlergiasEspecificadas: e.especificacion_antecedentes || "",
+        estudianteContactoEmergencia: e.nombre_emergencia || "",
+        estudianteTelefonoContactoEmergencia: e.numero_emergencia || "",
         
-        representanteNombre: e.representanteNombre || "",
-        representanteCI: e.representanteCI || "",
-        representanteRIF: e.representanteRIF || "",
-        representanteParentesco: e.representanteParentesco || "",
-        representanteTelefono: e.representanteTelefono,
-        representanteOcupacion: e.representanteOcupacion || "",
-        representanteProfesion: e.representanteProfesion || "",
-        representanteLugarTrabajo: e.representanteLugarTrabajo || "",
-        representanteDireccion: e.representanteDireccion || "",
-        representanteEmail: e.representanteEmail || "",
+        representanteNombre: e.nombre_representante || "",
+        representanteCI: e.cedula_representante || "",
+        representanteRIF: e.rif_representante || "",
+        representanteParentesco: e.parentesco || "",
+        representanteTelefono: e.telefono_representante || "",
+        representanteOcupacion: e.ocupacion_representante || "",
+        representanteProfesion: e.profesion_representante || "",
+        representanteLugarTrabajo: e.lugar_trabajo_representante || "",
+        representanteDireccion: e.direccion_representante || "",
+        representanteEmail: e.email_representante || "",
         
         instrumentos: e.instrumentos || "",
         teoricas: e.teoricas || "",
@@ -276,59 +134,57 @@ export default function Administrator() {
   // ------------------------------------------------------------------
 
   // Student registration handler
-  const handleRegistration = async (e: Estudiante): Promise<void> => {
+  const handleRegistration = async (e: ListaEsperaItem): Promise<{ message: string; id: number } | null> => {
     try {
-      const res = await fetch("/api/estudiante", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          estudianteNombre: e.estudianteNombre || "",
-          estudianteFechaNacimiento: e.estudianteFechaNacimiento || "",
-          estudianteGenero: e.estudianteGenero || "",
-          estudianteCI: e.estudianteCI || "",
-          estudianteRIF: e.estudianteRIF || "",
-          estudianteTelefono: e.estudianteTelefono,
-          estudianteInstitucion: e.estudianteInstitucion || "",
-          estudianteOcupacion: e.estudianteOcupacion || "",
-          estudianteProfesion: e.estudianteProfesion || "",
-          estudianteLugarTrabajo: e.estudianteLugarTrabajo || "",
-          estudianteEmail: e.estudianteEmail || "",
-          estudianteDireccion: e.estudianteDireccion || "",
-          estudianteAlergias: e.estudianteAlergias || "",
-          estudianteAntecedentes: e.estudianteAntecedentes || "",
-          estudianteAlergiasEspecificadas: e.estudianteAlergiasEspecificadas || "",
-          estudianteContactoEmergencia: e.estudianteContactoEmergencia || "",
-          estudianteTelefonoContactoEmergencia: e.estudianteTelefonoContactoEmergencia,
-          
-          representanteNombre: e.representanteNombre || "",
-          representanteCI: e.representanteCI || "",
-          representanteRIF: e.representanteRIF || "",
-          representanteParentesco: e.representanteParentesco || "",
-          representanteTelefono: e.representanteTelefono,
-          representanteOcupacion: e.representanteOcupacion || "",
-          representanteProfesion: e.representanteProfesion || "",
-          representanteLugarTrabajo: e.representanteLugarTrabajo || "",
-          representanteDireccion: e.representanteDireccion || "",
-          representanteEmail: e.representanteEmail || "",
-          
-          instrumentos: e.instrumentos || "",
-          teoricas: e.teoricas || "",
-          otros: e.otros || "",
-          autorizacion: e.autorizacion || "",
-        }),
-      })
+      // Map the wait list data to match Laravel's Estudiante model fields
+      const estudianteData = {
+        nombre: e.nombre || "",
+        genero: e.genero || "",
+        cedula: e.cedula || "",
+        fecha_nacimiento: e.fecha_nacimiento || "",
+        correo_electronico: e.email || "",
+        direccion: e.direccion || "",
+        telefono_estudiantes: e.telefono || "",
+        rif: e.rif || "",
+        institucion_educacional: e.institucion_educacional || "",
+        ocupacion: e.ocupacion || "",
+        profesion: e.profesion || "",
+        lugar_trabajo: e.lugar_trabajo || "",
+        alergico_a: e.alergico_a || "",
+        antecedentes: e.antecedentes || "",
+        especificacion_antecedentes: e.especificacion_antecedentes || "",
+        nombre_emergencia: e.nombre_emergencia || "",
+        numero_emergencia: e.numero_emergencia || "",
+        
+        nombre_representante: e.nombre_representante || "",
+        cedula_representante: e.cedula_representante || "",
+        parentesco: e.parentesco || "",
+        telefono_representante: e.telefono_representante || "",
+        ocupacion_representante: e.ocupacion_representante || "",
+        profesion_representante: e.profesion_representante || "",
+        lugar_trabajo_representante: e.lugar_trabajo_representante || "",
+        direccion_representante: e.direccion_representante || "",
+        rif_representante: e.rif_representante || "",
+        email_representante: e.email_representante || "",
+        
+        instrumentos: e.instrumentos || "",
+        teoricas: e.teoricas || "",
+        otros: e.otros || "",
+        autorizacion: e.autorizacion === "Sí" || e.autorizacion === "Si" || e.autorizacion === "1",
+      };
 
-      const results = await res.json();
+      const response = await estudianteApi.create(estudianteData);
       
-      if (!res.ok) {
-        console.log(`Error: ${results.message}`)
-        alert("Ha ocurrido un error. Por favor, intente nuevamente más tarde.");
-        return
+      if (response.message && response.id) {
+        console.log("Estudiante registrado exitosamente con ID:", response.id);
+        return response;
+      } else {
+        console.log("Error al registrar estudiante");
+        return null;
       }
     } catch (error) {
-      console.error(error);
+      console.error("Registration error:", error);
+      return null;
     }
   }
 
@@ -338,17 +194,36 @@ export default function Administrator() {
       const student = students.find((s) => s.id === id) ?? null;
 
       if (student) {
-        const updated = students.map((s) => s.id === id ? { ...s, estado: 0 } : s);
-        setStudents(updated);
+        // First register the student
+        const studentResponse = await handleRegistration(student);
+        
+        if (studentResponse && studentResponse.id) {
+          // Create user account for the student using UserController
+          const userResponse = await userApi.createUser(studentResponse.id);
+          
+          if (userResponse.message && userResponse.id) {
+            // Update their status in the wait list
+            const listResponse = await listaEsperaApi.update(id, 2); // 2 = accepted
+            
+            if (listResponse.message) {
+              // Remove from local state
+              setStudents(prev => prev.filter(s => s.id !== id));
+              alert("Aplicante aceptado con éxito. Usuario creado automáticamente.");
+            } else {
+              alert("Error al actualizar el estado del aplicante.");
+            }
+          } else {
+            alert("Error al crear la cuenta de usuario.");
+          }
+        } else {
+          alert("Error al registrar el estudiante.");
+        }
       } else {
         alert("Error. No se ha encontrado al aplicante.")
       }
-
-      window.location.reload();
-      alert("Aplicante aceptado con éxito.");
     } catch (error) {
-      console.error(error);
-      alert("Error.");
+      console.error("Acceptation error:", error);
+      alert("Error al procesar la aceptación.");
     }
   };
 
@@ -360,17 +235,22 @@ export default function Administrator() {
       const student = students.find((s) => s.id === id) ?? null;
 
       if (student) {
-        const updated = students.map((s) => s.id === id ? { ...s, estado: 0 } : s);
-        setStudents(updated);
+        // Update their status in the wait list
+        const response = await listaEsperaApi.update(id, 3); // 3 = rejected
+        
+        if (response.message) {
+          // Remove from local state
+          setStudents(prev => prev.filter(s => s.id !== id));
+          alert("Aplicante rechazado con éxito.");
+        } else {
+          alert("Error al actualizar el estado del aplicante.");
+        }
       } else {
         alert("Error. No se ha encontrado al aplicante.")
       }
-
-      window.location.reload();
-      alert("Aplicante rechazado con éxito.");
     } catch (error) {
-      console.error(error);
-      alert("Error.");
+      console.error("Rejection error:", error);
+      alert("Error al procesar el rechazo.");
     }
   };
 
@@ -417,9 +297,9 @@ export default function Administrator() {
                 ) : (
                   students.map((e) => (
                     <tr key={e.id} className="hover:bg-gray-100">
-                      <td className="px-4 py-2 text-xs font-montserrat">{e.estudianteNombre}</td>
-                      <td className="px-4 py-2 text-xs font-montserrat">{e.estudianteFechaNacimiento ? calculateAge(e.estudianteFechaNacimiento) : "-"}</td>
-                      <td className="px-4 py-2 text-xs font-montserrat">{e.estudianteCI || '—'}</td>
+                      <td className="px-4 py-2 text-xs font-montserrat">{e.nombre}</td>
+                      <td className="px-4 py-2 text-xs font-montserrat">{e.fecha_nacimiento ? calculateAge(e.fecha_nacimiento) : "-"}</td>
+                      <td className="px-4 py-2 text-xs font-montserrat">{e.cedula || '—'}</td>
                       <td className="px-4 py-2 text-xs font-montserrat">{e.instrumentos || '—'}</td>
                       <td className="px-4 py-2 text-xs font-montserrat">{e.teoricas || '—'}</td>
                       <td className="px-4 py-2 text-xs font-montserrat">{e.otros || '—'}</td>
@@ -448,7 +328,7 @@ export default function Administrator() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="flex flex-col bg-white max-w-sm w-full rounded-lg p-8 gap-6">
             <p className="font-montserrat font-medium text-center">
-              ¿Está seguro de que desea aceptar a <b>{students.find(e => e.id === selectedStudent)?.estudianteNombre}</b>? Esta acción no se puede revertir.
+              ¿Está seguro de que desea aceptar a <b>{students.find(e => e.id === selectedStudent)?.nombre}</b>? Esta acción no se puede revertir.
             </p>
             <div className="flex items-center justify-center gap-2">
               <button className="bg-gray-200 hover:bg-gray-300 px-6 py-2 rounded-full text-sm font-montserrat font-medium text-center" onClick={() => setShowConfirmationModal(false)}>
@@ -467,7 +347,7 @@ export default function Administrator() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="flex flex-col bg-white max-w-sm w-full rounded-lg p-8 gap-6">
             <p className="font-montserrat font-medium text-center">
-              ¿Está seguro de que desea rechazar a <b>{students.find(e => e.id === selectedStudent)?.estudianteNombre}</b>? Esta acción no se puede revertir.
+              ¿Está seguro de que desea rechazar a <b>{students.find(e => e.id === selectedStudent)?.nombre}</b>? Esta acción no se puede revertir.
             </p>
             <div className="flex items-center justify-center gap-2">
               <button className="bg-gray-200 hover:bg-gray-300 px-6 py-2 rounded-full text-sm font-montserrat font-medium" onClick={() => setShowRejectionModal(false)}>

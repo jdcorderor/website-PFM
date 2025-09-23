@@ -1,30 +1,5 @@
 import { useState, useEffect } from "react";
-
-// Interface for student data
-interface Estudiante {
-    id: number;
-    nombre: string;
-    cedula: string;
-    telefono: string;
-    email: string;
-    instrumentos: string;
-    teoricas: string;
-    otros: string;
-    activo: number;
-}
-
-// Interface for grades data
-interface Nota {
-    nota_final: number;
-    nivel_inicial: string;
-    siguiente_nivel: string;
-    materia: string;
-    periodo: string;
-    fecha_periodo: string;
-    profesor: string;
-};
-
-// ------------------------------------------------------
+import { studentApi, type Estudiante, type Nota } from "../../lib/api";
 
 // Function for grouping grades by subject
 function groupBySubject(notas: Nota[]): Record<string, Nota[]> {
@@ -34,86 +9,6 @@ function groupBySubject(notas: Nota[]): Record<string, Nota[]> {
         return acc;
     }, {} as Record<string, Nota[]>);
 }
-
-// ------------------------------------------------------
-
-// Mock data
-const estudiante = {
-    id: 1,
-    nombre: "Pedro Pérez",
-    cedula: "32546731",
-    telefono: "04241563782",
-    email: "pedroperez@gmail.com",
-    instrumentos: "",
-    teoricas: "",
-    otros: "",
-    activo: 1 
-}
-
-const notas: Record<string, Nota[]> = {
-    "Piano": [
-      {
-        nota_final: 18.7,
-        nivel_inicial: "Inicial",
-        siguiente_nivel: "Intermedio",
-        materia: "Piano",
-        periodo: "2025-1",
-        fecha_periodo: "2025-03-10",
-        profesor: "Prof. Valentina Romero"
-      },
-      {
-        nota_final: 19.2,
-        nivel_inicial: "Intermedio",
-        siguiente_nivel: "Avanzado",
-        materia: "Piano",
-        periodo: "2025-2",
-        fecha_periodo: "2025-07-08",
-        profesor: "Prof. Valentina Romero"
-      }
-    ],
-    "Teoría Musical": [
-      {
-        nota_final: 17.5,
-        nivel_inicial: "Básico",
-        siguiente_nivel: "Intermedio",
-        materia: "Teoría Musical",
-        periodo: "2025-1",
-        fecha_periodo: "2025-03-12",
-        profesor: "Prof. Luis Mavarez"
-      }
-    ],
-    "Violín": [
-      {
-        nota_final: 16.8,
-        nivel_inicial: "Intermedio",
-        siguiente_nivel: "Avanzado",
-        materia: "Violín",
-        periodo: "2025-2",
-        fecha_periodo: "2025-07-15",
-        profesor: "Prof. Camila Ríos"
-      },
-      {
-        nota_final: 18.0,
-        nivel_inicial: "Avanzado",
-        siguiente_nivel: "Superior",
-        materia: "Violín",
-        periodo: "2025-3",
-        fecha_periodo: "2025-11-05",
-        profesor: "Prof. Camila Ríos"
-      }
-    ],
-    "Canto": [
-      {
-        nota_final: 19.5,
-        nivel_inicial: "Inicial",
-        siguiente_nivel: "Intermedio",
-        materia: "Canto",
-        periodo: "2025-1",
-        fecha_periodo: "2025-03-18",
-        profesor: "Prof. Sofía Román"
-      }
-    ]
-};
   
 export default function Student() {
     // State variable for student data
@@ -134,32 +29,73 @@ export default function Student() {
 
     // Get student's data using fetch
     useEffect(() => {
-        try {
-            setLoadingStudent(true);
-            setTimeout(() => {
-                setStudent(estudiante);
+        const fetchStudentData = async () => {
+            try {
+                setLoadingStudent(true);
+                
+                // Get user data from localStorage (set during login)
+                const userData = localStorage.getItem('user_data');
+                if (!userData) {
+                    setStudentError("No se encontraron datos de usuario. Por favor, inicie sesión nuevamente.");
+                    setLoadingStudent(false);
+                    return;
+                }
+
+                const user = JSON.parse(userData);
+                // Use the student ID from the user data (assuming it's linked via id_estudiante)
+                const studentId = user.id_estudiante || user.id;
+                const response = await studentApi.getProfile(studentId);
+                
+                if (response.data) {
+                    setStudent(response.data);
+                } else {
+                    setStudentError("No se encontraron datos del estudiante.");
+                }
+            } catch (error) {
+                console.error("Error al cargar los datos del estudiante:", error);
+                setStudentError("Error al cargar los datos del estudiante.");
+            } finally {
                 setLoadingStudent(false);
-            }, 2000);
-        } catch(error) {
-            console.error("Error al cargar los datos del estudiante:", error);
-            setStudentError("Error al cargar los datos del estudiante.");
-            setStudent(null);
-        }
+            }
+        };
+
+        fetchStudentData();
     }, []);
     
     // Get student's grades using fetch
     useEffect(() => {
-        try {
-            setLoadingGrades(true);
-            setTimeout(() => {
-                setGrades(notas);
+        const fetchGrades = async () => {
+            try {
+                setLoadingGrades(true);
+                
+                // Get user data from localStorage
+                const userData = localStorage.getItem('user_data');
+                if (!userData) {
+                    setGradesError("No se encontraron datos de usuario.");
+                    setLoadingGrades(false);
+                    return;
+                }
+
+                const user = JSON.parse(userData);
+                // Use the student ID from the user data
+                const studentId = user.id_estudiante || user.id;
+                const response = await studentApi.getGrades(studentId);
+                
+                if (response.data && Array.isArray(response.data)) {
+                    const groupedGrades = groupBySubject(response.data);
+                    setGrades(groupedGrades);
+                } else {
+                    setGrades({});
+                }
+            } catch (error) {
+                console.error("Error al cargar las notas del estudiante:", error);
+                setGradesError("Error al cargar las notas del estudiante.");
+            } finally {
                 setLoadingGrades(false);
-            }, 4000);
-        } catch(error) {
-            console.error("Error al cargar las notas del estudiante:", error);
-            setGradesError("Error al cargar las notas del estudiante.");
-            setGrades(null);
-        }
+            }
+        };
+
+        fetchGrades();
     }, []);
 
     // ------------------------------------------------------
@@ -197,9 +133,9 @@ export default function Student() {
                     <div className="flex flex-col md:flex-row w-[85%] md:w-[80%] items-start justify-center gap-6 md:gap-16">
                         <div className="flex flex-col gap-2">
                             <div className="text-sm font-montserrat text-gray-700"><b>Nombre completo:</b> {student?.nombre}</div>
-                            <div className="text-sm font-montserrat text-gray-700"><b>Cédula de identidad:</b> {student?.cedula}</div>
-                            <div className="text-sm font-montserrat text-gray-700"><b>Teléfono:</b> {student?.telefono}</div>
-                            <div className="text-sm font-montserrat text-gray-700"><b>Correo electrónico:</b> {student?.email}</div>
+                            <div className="text-sm font-montserrat text-gray-700"><b>Cédula de identidad:</b> {student?.cedula || "No registrado"}</div>
+                            <div className="text-sm font-montserrat text-gray-700"><b>Teléfono:</b> {student?.telefono_estudiantes || "No registrado"}</div>
+                            <div className="text-sm font-montserrat text-gray-700"><b>Correo electrónico:</b> {student?.correo_electronico || "No registrado"}</div>
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="text-sm font-montserrat text-gray-700"><b>Instrumento principal:</b> {student?.instrumentos ? student?.instrumentos : "No registrado"}</div>

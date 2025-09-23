@@ -1,14 +1,6 @@
 import React, { useState } from "react";
 import { ArrowLeft } from "lucide-react";
-
-// Mock data
-const users = {
-  message: "OK",
-  data: [
-    { usuario: "administrador", clave: "administrador", rol: "administrador" },
-    { usuario: "pedroperez@gmail.com", clave: "pperez25", rol: "estudiante" }
-  ]
-}
+import { authApi, type LoginRequest } from "../../lib/api";
 
 export default function LogIn() {
   // State variables for login form fields
@@ -24,33 +16,47 @@ export default function LogIn() {
   // Login form submission handler
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
   
-    const body = {
-      usuario: username.trim() || "",
-      clave: password.trim() || "",
+    const credentials: LoginRequest = {
+      username: username.trim() || "",
+      password: password.trim() || "",
     };
-  
-    const user = users?.data?.find((u) => (u.usuario === body.usuario) && (u.clave === body.clave));
-  
-    if (!user) {
-      setError("Credenciales inválidas.");
-      setShowModal(true);
-      return;
-    }
-  
-    switch (user.rol) {
-      case "administrador":
-        window.location.href = "/administrador";
-        break;
-  
-      case "estudiante":
-        window.location.href = "/estudiante";
-        break;
-  
-      default:
-        setError("Credenciales inválidas.");
+
+    try {
+      const response = await authApi.login(credentials);
+      
+      if (response.user) {
+        // Store user data in localStorage for later use
+        localStorage.setItem('user_data', JSON.stringify(response.user));
+        
+        // Check user role - assuming the UserResource includes role information
+        // You may need to adjust this based on your UserResource structure
+        const userRole = response.user.role?.name || response.user.role_name || response.user.role;
+        
+        // Redirect based on role
+        switch (userRole) {
+          case "administrador":
+          case "administrator":
+            window.location.href = "/administrador";
+            break;
+          case "estudiante":
+          case "student":
+            window.location.href = "/estudiante";
+            break;
+          default:
+            setError("Rol de usuario no reconocido.");
+            setShowModal(true);
+            break;
+        }
+      } else {
+        setError("Respuesta del servidor inválida.");
         setShowModal(true);
-        break;
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("Credenciales inválidas o error del servidor.");
+      setShowModal(true);
     }
   };
   
