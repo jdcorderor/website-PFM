@@ -405,18 +405,18 @@ export default function Registration() {
   };
 
   return (
-    <section id="inscripción" className="w-full overflow-hidden bg-white py-12">
-        <div className="flex flex-col w-[90%] md:w-[55%] gap-6 py-12 mx-auto mb-12 bg-white border border-gray-200 rounded-3xl">
+    <section id="inscripción" className="w-full overflow-hidden bg-white py-12 background">
+        <div className="flex flex-col w-[90%] md:w-[55%] gap-6 py-4 md:py-12 mx-auto mb-12 md:bg-white md:border border-gray-200 rounded-3xl">
             <div className="flex flex-col gap-8">
                 <div className="flex w-full items-center justify-center">
                     <div className="flex items-center justify-center gap-2">
-                        <img src="/logo-original.png" alt="Programa de Formación Musical - Maestro José Calabrese" className="w-20 md:w-20 md:h-fit justify-center" />
+                        <img src="/logo-original.png" alt="Academia Internacional de Música - Maestro José Calabrese" className="w-20 md:w-20 md:h-fit justify-center" />
                         <img src="/logo-fosc.png" alt="Fundación Orquesta Sinfónica de Carabobo" className="w-35 md:w-35 md:h-fit justify-center pl-2 border-l border-gray-300" />
                     </div>
                 </div>
 
                 <div className="flex flex-col gap-1">
-                    <h1 className="md:text-xl font-montserrat font-medium text-center">Programa de Formación Musical</h1>
+                    <h1 className="md:text-xl font-montserrat font-medium text-center">Academia Internacional de Música</h1>
                     <h2 className="text-xl md:text-3xl font-montserrat font-bold text-center">Maestro José Calabrese</h2>
                 </div>
                 <p className="md:text-lg font-montserrat font-semibold text-center">Planilla de Inscripción</p>
@@ -426,7 +426,7 @@ export default function Registration() {
 
                 {/* -------------------- Estudiante -------------------- */}
 
-                <h3 className="font-montserrat font-medium text-center md:text-left w-full pt-8 pb-2 mt-4 border-t border-gray-200">Datos del Estudiante</h3>
+                <h3 className="font-montserrat font-medium text-center md:text-left w-full pt-6 md:pt-8 pb-2 mt-0 md:mt-4 border-t border-gray-200">Datos del Estudiante</h3>
 
                 {/* Foto */}
                 <div className="flex flex-col items-center justify-center w-[40%] gap-4 mb-4 imagen">
@@ -1064,8 +1064,8 @@ export default function Registration() {
 
                 <h3 className="font-montserrat font-medium text-center md:text-left w-full pt-8 pb-2 mt-4 border-t border-gray-200">Autorización</h3>
 
-                <p className="md:text-sm font-montserrat font-medium text-justify">
-                    Autorizo a la Fundación Orquesta Sinfónica de Carabobo a hacer uso del material fotográfico y audiovisual de las actividades académicas y artísticas que se lleven a cabo durante el desarrollo del Programa de Formación Musical. Las imágenes podrán ser usadas para la difusión en medios de comunicación y redes sociales. *
+                <p className="text-xs md:text-sm font-montserrat font-medium text-justify">
+                    Autorizo a la Fundación Orquesta Sinfónica de Carabobo a hacer uso del material fotográfico y audiovisual de las actividades académicas y artísticas que se lleven a cabo durante el desarrollo del Academia Internacional de Música. Las imágenes podrán ser usadas para la difusión en medios de comunicación y redes sociales. *
                 </p>
 
                 <div className="flex flex-col gap-2">

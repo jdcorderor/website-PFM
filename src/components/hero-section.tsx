@@ -19,6 +19,7 @@ export default function HeroSection() {
     { href: "#nosotros", label: "Nosotros" },
     { href: "#historia", label: "Historia" },
     { href: "#aliados", label: "Aliados" },
+    { href: "/galeria", label: "Galería" },
     { href: "/registro", label: "Inscripción" },
     { href: "#contacto", label: "Contacto" },
   ]
@@ -55,23 +56,23 @@ export default function HeroSection() {
   }, []);
 
   return(
-    <section id="inicio" ref={ref} className="relative w-full min-h-110 md:min-h-screen bottom-fade">
+    <section id="inicio" ref={ref} className="relative w-full min-h-130 md:min-h-screen bottom-fade">
       <div className="absolute inset-0 z-0 w-full">
-        <Swiper loop={true} autoplay={{ delay: 5000 }} className="flex w-full h-110 md:h-[100%]">
+        <Swiper loop={true} autoplay={{ delay: 5000 }} className="flex w-full h-130 md:h-[100%]">
           {["/herosection/image1.JPG", "/herosection/image2.JPG", "/herosection/image3.JPG", "/herosection/image4.jpg", "/herosection/image5.JPG", "/herosection/image6.JPG"].map((src, index) => (
             <SwiperSlide key={index}>
-              <img src={src} alt="Programa de Formación Musical - Maestro José Calabrese" className="w-full h-110 md:h-[100%] object-cover" />
-              <div className="absolute inset-0 z-5 h-110 md:h-[100%] bg-black opacity-50 pointer-events-none"></div>
+              <img src={src} alt="Academia Internacional de Música - Maestro José Calabrese" className="w-full h-130 md:h-[100%] object-cover" />
+              <div className="absolute inset-0 z-5 h-130 md:h-[100%] bg-black opacity-50 pointer-events-none"></div>
             </SwiperSlide>
           ))}
         </Swiper>
       </div>
 
       {/* Navigator */}
-      <header className="flex items-center justify-between p-8 md:px-24 md:py-6 z-10 slide-from-bottom">
+      <header className="flex items-center p-8 md:px-24 md:py-6 z-10 slide-from-bottom">
         <div className="flex w-full items-center justify-start z-10">
           <div className="flex w-1/2 lg:w-1/3 items-center">
-            <img src="/logo.png" alt="Programa de Formación Musical - Maestro José Calabrese" className="w-10 md:w-15" />
+            <img src="/logo.png" alt="Academia Internacional de Música - Maestro José Calabrese" className="w-10 md:w-15" />
           </div>
 
           {/* Main menu */}
@@ -110,7 +111,7 @@ export default function HeroSection() {
       {/* Content */}
       <div className="relative inset-0 z-10 top-5 md:top-30 flex flex-col w-[85vw] gap-4 md:gap-6 mx-auto">
         <h1 className={`font-montserrat text-white text-center md:leading-[4rem] ${ titleVisible ? "slide-from-bottom" : "opacity-0" }`}>
-          <span className="text-xl md:text-5xl font-light">Programa de Formación Musical</span> <br /> <span className="text-4xl md:text-6xl bg-clip-text text-transparent bg-white font-bold ">Maestro José Calabrese</span>
+          <span className="text-lg md:text-5xl font-light">Academia Internacional de Música</span> <br /> <span className="text-4xl md:text-6xl bg-clip-text text-transparent bg-white font-bold ">Maestro José Calabrese</span>
         </h1>
         <p className={`text-base md:text-3xl font-montserrat text-white text-center px-6 md:px-0 ${ phraseVisible ? "slide-from-bottom" : "opacity-0" }`}>
           <i>Desde el corazón de Carabobo, resonando con historia y pasión</i>

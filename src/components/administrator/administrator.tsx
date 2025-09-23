@@ -256,14 +256,18 @@ export default function Administrator() {
 
   return (
     <section id="administrator">
-      <div className="flex flex-col w-[90vw] md:w-[80vw] items-center justify-center py-16 gap-12 mx-auto">
+      <div className="absolute inset-0 z-0 w-full">
+        <img src="/background.png" className="w-full h-full" />
+      </div>
+
+      <div className="flex flex-col w-[90vw] md:w-[80vw] items-center justify-center py-16 gap-12 mx-auto relative z-10">
         <div className="flex flex-col w-full gap-6 pb-6 border-b border-gray-200">
           <div className="flex items-center justify-center gap-2">
-            <img src="/logo-original.png" alt="Programa de Formación Musical - Maestro José Calabrese" className="w-20 md:w-20 md:h-fit justify-center" />
+            <img src="/logo-original.png" alt="Academia Internacional de Música - Maestro José Calabrese" className="w-20 md:w-20 md:h-fit justify-center" />
             <img src="/logo-fosc.png" alt="Fundación Orquesta Sinfónica de Carabobo" className="w-35 md:w-35 md:h-fit justify-center pl-2 border-l border-gray-300" />
           </div>
           <div className="flex flex-col">
-            <h1 className="text-lg font-montserrat text-gray-800 font-medium text-center">Programa de Formación Musical</h1>
+            <h1 className="text-lg font-montserrat text-gray-800 font-medium text-center">Academia Internacional de Música</h1>
             <h2 className="text-2xl font-montserrat text-gray-800 font-bold text-center">Maestro José Calabrese</h2>
           </div>
           <h3 className="text-xl font-montserrat text-gray-800 font-bold text-center">Lista de Espera</h3>
