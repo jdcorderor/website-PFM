@@ -14,7 +14,7 @@ export default function AboutUs() {
         ([entry]) => {
             setSectionVisible(entry.isIntersecting);
         },
-        { threshold: 0.2 }
+        { threshold: 0.1 }
         );
         
         if (ref.current) observer.observe(ref.current);
