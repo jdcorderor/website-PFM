@@ -1,9 +1,9 @@
 // API Configuration for different environments
 export const API_CONFIG = {
   development: {
-    baseUrl: 'http://localhost:8080/api',
+    baseUrl: 'http://localhost:8000/api',
   },
-  
+
   production: {
     baseUrl: 'https://no-recuerdo-el-dominio/api',
   }
@@ -12,9 +12,9 @@ export const API_CONFIG = {
 // Get current environment
 const getEnvironment = (): 'development' | 'production' => {
   if (typeof window === 'undefined') return 'development';
-  
+
   const hostname = window.location.hostname;
-  
+
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     return 'development';
   } else {

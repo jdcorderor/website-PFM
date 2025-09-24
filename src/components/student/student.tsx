@@ -9,7 +9,7 @@ function groupBySubject(notas: Nota[]): Record<string, Nota[]> {
         return acc;
     }, {} as Record<string, Nota[]>);
 }
-  
+
 export default function Student() {
     // State variable for student data
     const [student, setStudent] = useState<Estudiante | null>(null);
@@ -32,7 +32,7 @@ export default function Student() {
         const fetchStudentData = async () => {
             try {
                 setLoadingStudent(true);
-                
+
                 // Get user data from localStorage (set during login)
                 const userData = localStorage.getItem('user_data');
                 if (!userData) {
@@ -43,9 +43,10 @@ export default function Student() {
 
                 const user = JSON.parse(userData);
                 // Use the student ID from the user data (assuming it's linked via id_estudiante)
-                const studentId = user.id_estudiante || user.id;
+                const studentId = user.id_estudiante || user.role.id;
+                console.log('Fetching profile for student ID:', studentId);
                 const response = await studentApi.getProfile(studentId);
-                
+
                 if (response.data) {
                     setStudent(response.data);
                 } else {
@@ -61,13 +62,13 @@ export default function Student() {
 
         fetchStudentData();
     }, []);
-    
+
     // Get student's grades using fetch
     useEffect(() => {
         const fetchGrades = async () => {
             try {
                 setLoadingGrades(true);
-                
+
                 // Get user data from localStorage
                 const userData = localStorage.getItem('user_data');
                 if (!userData) {
@@ -78,9 +79,9 @@ export default function Student() {
 
                 const user = JSON.parse(userData);
                 // Use the student ID from the user data
-                const studentId = user.id_estudiante || user.id;
+                const studentId = user.id_estudiante || user.role.id;
                 const response = await studentApi.getGrades(studentId);
-                
+
                 if (response.data && Array.isArray(response.data)) {
                     const groupedGrades = groupBySubject(response.data);
                     setGrades(groupedGrades);
@@ -116,7 +117,7 @@ export default function Student() {
             </div>
         );
     }
-    
+
     if (!loadingStudent && !student) {
         return (
             <div className="flex flex-col w-full h-120 md:h-150 items-center justify-center">
