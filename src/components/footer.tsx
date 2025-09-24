@@ -35,17 +35,17 @@ export default function Footer() {
             <div className={`relative w-full border-t border-gray-200 ${ visible ? "slide-from-bottom" : "opacity-0" }`}>
                 <div className="absolute inset-0 z-0 bg-gray-100"></div>
                 
-                <div className="relative z-10 p-12 md:p-8 mx-auto">
-                    <div className="w-full flex flex-col lg:flex-row flex-wrap items-center justify-center md:justify-between py-2 md:py-4 mx-auto">             
+                <div className="relative z-10 p-8 md:px-12 md:py-5 mx-auto">
+                    <div className="w-full flex flex-col lg:flex-row items-center justify-center py-2 md:py-4 mx-auto">             
                         {/* Logos */}
-                        <div className="flex flex-col items-center md:w-1/5 md:px-10 gap-8 md:gap-5">
-                            <div className="flex items-center gap-2">
-                                <img src="/logo-original.png" alt="Programa de Formación Musical - Maestro José Calabrese" className="w-20 md:w-20 md:h-fit justify-center" />
+                        <div className="flex flex-col items-center md:items-start md:w-1/5 gap-8 md:gap-5">
+                            <div className="flex items-center md:items-start gap-2">
+                                <img src="/logo-original.png" alt="Academia Internacional de Música - Maestro José Calabrese" className="w-20 md:w-20 md:h-fit justify-center" />
                                 <img src="/logo-fosc.png" alt="Fundación Orquesta Sinfónica de Carabobo" className="w-35 md:w-35 md:h-fit justify-center pl-2 border-l border-gray-300" />
                             </div>
                             <div className="flex flex-col gap-2">
                                 <p className="w-full text-xs text-gray-800 text-center md:text-left"><b>Salón MZ-08, Hotel Hesperia WTC</b> <br /> Naguanagua, Carabobo</p>
-                                <p className="w-full text-xs text-gray-800 text-center md:text-left"><b>Universidad José Antonio Páez</b> <br /> San Diego, Carabobo</p>
+                                <p className="w-full text-xs text-gray-800 text-center md:text-left"><b>Edificio 4, Piso 1, Universidad José Antonio Páez</b> <br /> San Diego, Carabobo</p>
                             </div>
                         </div>
 
@@ -57,8 +57,8 @@ export default function Footer() {
                         </div>
 
                         {/* Social media */}
-                        <div className="w-full lg:w-1/5 space-y-4 text-center md:pt-12 lg:pt-0">
-                            <div className="flex flex-row items-center justify-center gap-4">
+                        <div className="w-full lg:w-1/5 md:pt-12 lg:pt-0">
+                            <div className="flex flex-row items-center justify-center md:justify-end gap-4">
                                 <a href="https://www.instagram.com/sinfocarabobo" aria-label="Instagram" className="flex w-10 h-10 bg-[#C19310] justify-center items-center rounded-full hover:opacity-70" target="_blank">
                                     <FaInstagram className="w-5 md:w-6 h-5 md:h-6 text-white hover:opacity-75 transition-opacity" />
                                 </a>

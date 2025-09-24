@@ -161,7 +161,7 @@ export default function Allies() {
             <section ref={gridRef} className="relative w-full min-h-300 md:min-h-screen border-y-6 border-white">
                 <div className="absolute inset-0 z-0 w-full grid md:grid-cols-2">
                     <div className={`flex flex-col w-full bg-gradient-to-b from-[#7A5C20] to-[#BFA75A] gap-12 px-12 md:px-24 items-center md:items-start justify-center ${ gridVisible ? "slide-from-left" : "opacity-0" }`}>
-                        <h2 className="text-5xl md:text-7xl font-montserrat text-white text-center md:text-left"><b>¿Quieres formar parte del programa?</b></h2>
+                        <h2 className="text-5xl md:text-7xl font-montserrat text-white text-center md:text-left"><b>¿Quieres formar parte de la academia?</b></h2>
                         <a href="/registro" className="flex w-fit items-center md:items-start justify-center md:justify-start bg-[#7A5C20] hover:bg-[#7A5C20]/80 gap-1 px-12 py-[1vh] rounded-full text-lg md:text-2xl font-montserrat text-white font-medium duration-300 cursor-pointer">Inscríbete ya<ChevronRight className="w-8 h-8"></ChevronRight></a>
                     </div> 
                     

@@ -137,7 +137,7 @@ const PDF = ({ data }) => (
         <View style={styles.logoSection}>
           <Image src="/logo-original.png" style={styles.logo} />
           <Text style={styles.mainTitle}>
-            Programa de Formación Musical "Maestro José Calabrese"
+            Academia Internacional de Música "Maestro José Calabrese"
           </Text>
           <Text style={styles.mainTitle}>
             Fundación Orquesta Sinfónica de Carabobo
@@ -352,7 +352,7 @@ const PDF = ({ data }) => (
       {/* Autorización */}
       <View style={styles.section}>
         <Text>
-          <Text style={{ fontWeight: "bold", fontSize: 10 }}>Autorizo a la Fundación Orquesta Sinfónica de Carabobo a hacer uso del material fotográfico y audiovisual de las actividades académicas y artísticas que se lleven a cabo durante el desarrollo del Programa de Formación Musical. Las imágenes podrán ser usadas para la difusión en medios de comunicación y redes sociales.{" "}</Text>
+          <Text style={{ fontWeight: "bold", fontSize: 10 }}>Autorizo a la Fundación Orquesta Sinfónica de Carabobo a hacer uso del material fotográfico y audiovisual de las actividades académicas y artísticas que se lleven a cabo durante el desarrollo del Academia Internacional de Música. Las imágenes podrán ser usadas para la difusión en medios de comunicación y redes sociales.{" "}</Text>
           <Text style={{ borderBottomWidth: 1, borderBottomColor: "#4B5563", paddingHorizontal: 4 }}>
             {data.autorizacion}
           </Text>

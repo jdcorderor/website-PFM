@@ -76,23 +76,23 @@ export default function AboutUs() {
 
                     <div className="grid md:grid-cols-3 items-center justify-center gap-y-8">
                         <div className="flex flex-col items-center bg-transparent gap-2 md:gap-4">
-                            <img src="/about/image1.png" alt="Programa de Formación Musical - Maestro José Calabrese" className="w-35 md:w-60 h-35 md:h-60 object-cover" />
+                            <img src="/about/image1.png" alt="Academia Internacional de Música - Maestro José Calabrese" className="w-35 md:w-60 h-35 md:h-60 object-cover" />
                             <div className="flex flex-col justify-center items-center md:gap-1">
-                                <span className="text-4xl md:text-5xl font-montserrat text-white font-bold"><Counter target={200} suffix="+" visible={sectionVisible} /></span>
+                                <span className="text-4xl md:text-5xl font-montserrat text-white font-bold"><Counter target={300} suffix="+" visible={sectionVisible} /></span>
                                 <p className="text-xl md:text-2xl font-montserrat text-white font-normal">Estudiantes</p>
                             </div>
                         </div>
                         <div className="flex flex-col items-center bg-transparent gap-2 md:gap-4">
-                            <img src="/about/image2.png" alt="Programa de Formación Musical - Maestro José Calabrese" className="w-35 md:w-60 h-35 md:h-60 object-cover" />
+                            <img src="/about/image2.png" alt="Academia Internacional de Música - Maestro José Calabrese" className="w-35 md:w-60 h-35 md:h-60 object-cover" />
                             <div className="flex flex-col justify-center items-center md:gap-1">
                                 <span className="text-4xl md:text-5xl font-montserrat text-white font-bold"><Counter target={30} suffix="+" visible={sectionVisible} /></span>
                                 <p className="text-xl md:text-2xl font-montserrat text-white font-normal">Cátedras</p>
                             </div>
                         </div>
                         <div className="flex flex-col items-center bg-transparent gap-2 md:gap-4">
-                            <img src="/about/image3.png" alt="Programa de Formación Musical - Maestro José Calabrese" className="w-35 md:w-60 h-35 md:h-60 object-cover" />
+                            <img src="/about/image3.png" alt="Academia Internacional de Música - Maestro José Calabrese" className="w-35 md:w-60 h-35 md:h-60 object-cover" />
                             <div className="flex flex-col justify-center items-center md:gap-1">
-                                <span className="text-4xl md:text-5xl font-montserrat text-white font-bold"><Counter target={48} suffix="+" visible={sectionVisible} /></span>
+                                <span className="text-4xl md:text-5xl font-montserrat text-white font-bold"><Counter target={49} suffix="+" visible={sectionVisible} /></span>
                                 <p className="text-xl md:text-2xl font-montserrat text-white font-normal">Años de historia</p>
                             </div>
                         </div>
@@ -109,7 +109,7 @@ export default function AboutUs() {
                     <div className={`w-full grid grid-cols-3 gap-1 ${ gridVisible ? "slide-from-right" : "opacity-0" }`}>
                         {["grid1.JPG", "grid2.JPG", "grid3.JPG", "grid7.JPG", "grid4.JPG", "grid6.JPG", "grid5.JPG"].map((img, i) => (
                             <div key={i} className={`relative w-full h-full md:h-[33.3vh] ${img === "grid1.JPG" || img === "grid5.JPG" ? "col-span-2" : ""}`}>
-                                <img src={`/about/${img}`} alt="Programa de Formación Musical - Maestro José Calabrese" className="w-full h-full object-cover" />
+                                <img src={`/about/${img}`} alt="Academia Internacional de Música - Maestro José Calabrese" className="w-full h-full object-cover" />
                                 <div className="absolute inset-0 bg-black opacity-30 z-10 pointer-events-none"></div>
                             </div>
                         ))}
@@ -136,7 +136,7 @@ export default function AboutUs() {
                             <p className="font-montserrat text-white font-medium text-center">Formar a niños(as) para ser los futuros miembros de la OSC, desde un enfoque de la educación musical integral que enfatiza la iniciación en la práctica instrumental individual y grupal desde edades muy tempranas.</p>
                         </div>
                         <div className="w-full p-6 border-4 border-[#BFA760] rounded-3xl hover:scale-110 duration-400">
-                            <p className="font-montserrat text-white font-medium text-center">Proporcionar a los participantes del Programa, la oportunidad de descubrir sus capacidades interpretativas en una formación orquestal, permitiéndoles desarrollarse como músicos profesionales potencialmente exitosos.</p>
+                            <p className="font-montserrat text-white font-medium text-center">Proporcionar a los miembros de la Academia, la oportunidad de descubrir sus capacidades interpretativas en una formación orquestal, permitiéndoles desarrollarse como músicos profesionales potencialmente exitosos.</p>
                         </div>
                         <div className="w-full p-6 border-4 border-[#BFA760] rounded-3xl hover:scale-110 duration-400">
                             <p className="font-montserrat text-white font-medium text-center">Desarrollar un programa educativo musical que contemple contenidos complementarios y en valores que contribuyan a la formación integral de los niños, niñas y adolescentes participantes.</p>
