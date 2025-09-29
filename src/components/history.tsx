@@ -139,7 +139,7 @@ export default function History() {
                         </div>
                     </div>
                     
-                    <div className={`relative w-full h-100 md:h-full border-t-6 md:border-t-0 md:border-l-6 border-white ${ altGridVisible ? "slide-from-right" : "opacity-0" }`}>
+                    <div className={`relative w-full h-96 md:h-full border-t-6 md:border-t-0 md:border-l-6 border-white ${ altGridVisible ? "slide-from-right" : "opacity-0" }`}>
                         <div className="grid grid-cols-2 gap-1">
                             <div className="flex flex-col gap-1">
                                 <div className="relative">
