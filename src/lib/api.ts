@@ -182,8 +182,6 @@ export const authApi = {
       body: JSON.stringify(credentials),
     })
 
-    console.log(response)
-
     if (response.token) {
       setAuthToken(response.token)
     }
@@ -214,23 +212,21 @@ export const authApi = {
 
 // Student profile API calls
 export const studentApi = {
-  getProfile: async (
-    studentId: number
-  ): Promise<{ message: string; data: Estudiante }> => {
-    return apiRequest(`/perfil-estudiante/${studentId}`)
+  getProfile: async (): Promise<{ message: string; data: Estudiante }> => {
+    return apiRequest(`/estudiante/perfil`)
   },
 
   getGrades: async (
     studentId: number
   ): Promise<{ message: string; data: Nota[] }> => {
-    return apiRequest("/perfil-estudiante/notas", {
+    return apiRequest("/estudiante/notas", {
       method: "POST",
       body: JSON.stringify({ id: studentId }),
     })
   },
 
   generatePlanilla: async (studentData: any): Promise<Blob> => {
-    const url = `${API_BASE_URL}/perfil-estudiante/generar-planilla`
+    const url = `${API_BASE_URL}/estudiante/generar-planilla`
     const token = getAuthToken()
 
     const headers: HeadersInit = {
