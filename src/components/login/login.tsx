@@ -1,75 +1,80 @@
-import React, { useState } from "react";
-import { ArrowLeft } from "lucide-react";
-import { authApi, type LoginRequest } from "../../lib/api";
+import React, { useState } from "react"
+import { ArrowLeft } from "lucide-react"
+import { authApi, type LoginRequest } from "../../lib/api"
 
 export default function LogIn() {
   // State variables for login form fields
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
 
   // State variables for error/modals management
-  const [error, setError] = useState("");
-  const [showModal, setShowModal] = useState(false);
- 
+  const [error, setError] = useState("")
+  const [showModal, setShowModal] = useState(false)
+
   // --------------------------------------------------
 
   // Login form submission handler
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-  
+    e.preventDefault()
+    setError("")
+
     const credentials: LoginRequest = {
       username: username.trim() || "",
       password: password.trim() || "",
-    };
+    }
 
     try {
-      const response = await authApi.login(credentials);
-      
+      console.log(username, password)
+
+      const response = await authApi.login(credentials)
+
       if (response.user) {
         // Store user data in localStorage for later use
-        localStorage.setItem('user_data', JSON.stringify(response.user));
-        
+        localStorage.setItem("user_data", JSON.stringify(response.user))
+
         // Check user role - assuming the UserResource includes role information
         // You may need to adjust this based on your UserResource structure
-        const userRole = response.user.role?.name || response.user.role_name || response.user.role;
-        
+        const userRole = response.user.role.id
+
         // Redirect based on role
         switch (userRole) {
-          case "administrador":
-          case "administrator":
-            window.location.href = "/administrador";
-            break;
-          case "estudiante":
-          case "student":
-            window.location.href = "/estudiante";
-            break;
+          case 1:
+            window.location.href = "/administrador"
+            break
+          case 3:
+            window.location.href = "/estudiante"
+            break
           default:
-            setError("Rol de usuario no reconocido.");
-            setShowModal(true);
-            break;
+            setError("Rol de usuario no reconocido.")
+            setShowModal(true)
+            break
         }
       } else {
-        setError("Respuesta del servidor inválida.");
-        setShowModal(true);
+        setError("Respuesta del servidor inválida.")
+        setShowModal(true)
       }
     } catch (error) {
-      console.error("Login error:", error);
-      setError("Credenciales inválidas o error del servidor.");
-      setShowModal(true);
+      console.error("Login error:", error)
+      setError("Credenciales inválidas o error del servidor.")
+      setShowModal(true)
     }
-  };
-  
+  }
+
   return (
-    <section id="login" className="flex flex-col w-full items-center py-12 md:py-36">
+    <section
+      id="login"
+      className="flex flex-col w-full items-center py-12 md:py-36"
+    >
       <div className="fixed inset-0 z-0 w-full h-full">
         <img src="/background.png" className="w-full h-full object-cover" />
       </div>
 
       <div className="w-sm flex flex-col items-center justify-center px-8 py-6 gap-6 md:border border-gray-200 rounded-2xl md:bg-white relative z-10">
-        <h1 className="text-2xl font-montserrat text-gray-800 font-bold text-center w-[85%] py-3 border-b border-gray-200">Iniciar sesión</h1>
+        <h1 className="text-2xl font-montserrat text-gray-800 font-bold text-center w-[85%] py-3 border-b border-gray-200">
+          Iniciar sesión
+        </h1>
         <form onSubmit={handleSubmit} className="flex flex-col w-[85%] gap-4">
-          <div className="flex flex-col gap-1"> 
+          <div className="flex flex-col gap-1">
             <label className="font-medium text-gray-700">Usuario *</label>
             <input
               id="username"
@@ -96,9 +101,12 @@ export default function LogIn() {
             Iniciar sesión
           </button>
           <div className="flex justify-center py-2">
-              <a href="#" className="text-xs font-inter text-gray-600 hover:underline">
-                ¿Olvidaste tu contraseña?
-              </a>
+            <a
+              href="#"
+              className="text-xs font-inter text-gray-600 hover:underline"
+            >
+              ¿Olvidaste tu contraseña?
+            </a>
           </div>
         </form>
       </div>
@@ -109,7 +117,8 @@ export default function LogIn() {
           <div className="bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
             <div className="flex flex-col gap-4">
               <p className="text-sm font-montserrat text-gray-700 text-center leading-relaxed">
-                <b className="text-base">Error de inicio de sesión.</b> <br /><br />
+                <b className="text-base">Error de inicio de sesión.</b> <br />
+                <br />
                 {error} <br />
                 Por favor, intente nuevamente.
               </p>
@@ -126,6 +135,6 @@ export default function LogIn() {
           </div>
         </div>
       )}
-    </section> 
+    </section>
   )
 }

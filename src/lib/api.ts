@@ -177,7 +177,7 @@ async function apiRequest<T>(
 // Authentication API calls
 export const authApi = {
   login: async (credentials: LoginRequest): Promise<LoginResponse> => {
-    const response = await apiRequest<LoginResponse>("/estudiante/login", {
+    const response = await apiRequest<LoginResponse>("/login", {
       method: "POST",
       body: JSON.stringify(credentials),
     })
