@@ -2,12 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import { FaInstagram, FaWhatsapp, FaYoutube, FaFacebook } from "react-icons/fa";
 
 const links = [
-    { href: "#inicio", label: "Inicio" },
-    { href: "#nosotros", label: "Nosotros" },
-    { href: "#historia", label: "Historia" },
-    { href: "#aliados", label: "Aliados" },
+    { href: "/#inicio", label: "Inicio" },
+    { href: "/#nosotros", label: "Nosotros" },
+    { href: "/#historia", label: "Historia" },
+    { href: "/#aliados", label: "Aliados" },
     { href: "/registro", label: "Inscripción" },
-    { href: "#contacto", label: "Contacto" },
+    { href: "/#contacto", label: "Contacto" },
 ]
 
 export default function Footer() {
@@ -39,8 +39,8 @@ export default function Footer() {
                     <div className="w-full flex flex-col lg:flex-row items-center justify-center py-2 md:py-4 mx-auto">             
                         {/* Logos */}
                         <div className="flex flex-col items-center md:items-start md:w-1/5 gap-8 md:gap-5">
-                            <div className="flex items-center md:items-start gap-2">
-                                <img src="/logo-original.png" alt="Academia Internacional de Música - Maestro José Calabrese" className="w-20 md:w-20 md:h-fit justify-center" />
+                            <div className="flex items-center md:items-center gap-2">
+                                <img src="/logo.png" alt="Academia Internacional de Música - Maestro José Calabrese" className="w-22 md:w-22 md:h-fit justify-center" />
                                 <img src="/logo-fosc.png" alt="Fundación Orquesta Sinfónica de Carabobo" className="w-35 md:w-35 md:h-fit justify-center pl-2 border-l border-gray-300" />
                             </div>
                             <div className="flex flex-col gap-2">

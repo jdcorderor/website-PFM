@@ -410,7 +410,7 @@ export default function Registration() {
             <div className="flex flex-col gap-8">
                 <div className="flex w-full items-center justify-center">
                     <div className="flex items-center justify-center gap-2">
-                        <img src="/logo-original.png" alt="Academia Internacional de Música - Maestro José Calabrese" className="w-20 md:w-20 md:h-fit justify-center" />
+                        <img src="/logo.png" alt="Academia Internacional de Música - Maestro José Calabrese" className="w-22 md:w-22 md:h-fit justify-center" />
                         <img src="/logo-fosc.png" alt="Fundación Orquesta Sinfónica de Carabobo" className="w-35 md:w-35 md:h-fit justify-center pl-2 border-l border-gray-300" />
                     </div>
                 </div>
