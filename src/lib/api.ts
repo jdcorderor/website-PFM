@@ -1,154 +1,154 @@
-import { API_BASE_URL } from '../config/api';
+import { API_BASE_URL } from "../config/api"
 
 // Types for API responses
 export interface ApiResponse<T> {
-  message: string;
-  data?: T;
+  message: string
+  data?: T
 }
 
 export interface LoginRequest {
-  username: string;
-  password: string;
+  username: string
+  password: string
 }
 
 export interface LoginResponse {
-  token: string;
-  user: any; // UserResource from Laravel
+  token: string
+  user: any // UserResource from Laravel
 }
 
 export interface CreateUserRequest {
-  name: string;
-  email: string;
-  password: string;
-  password_confirmation: string;
+  name: string
+  email: string
+  password: string
+  password_confirmation: string
 }
 
 export interface Estudiante {
-  id: number;
-  nombre: string;
-  genero?: string;
-  cedula?: string;
-  fecha_nacimiento?: string;
-  correo_electronico?: string;
-  direccion?: string;
-  telefono_estudiantes?: string;
-  rif?: string;
-  institucion_educacional?: string;
-  ocupacion?: string;
-  profesion?: string;
-  lugar_trabajo?: string;
-  alergico_a?: string;
-  antecedentes?: string;
-  especificacion_antecedentes?: string;
-  nombre_emergencia?: string;
-  numero_emergencia?: string;
-  nombre_representante?: string;
-  cedula_representante?: string;
-  parentesco?: string;
-  telefono_representante?: string;
-  ocupacion_representante?: string;
-  profesion_representante?: string;
-  lugar_trabajo_representante?: string;
-  direccion_representante?: string;
-  rif_representante?: string;
-  email_representante?: string;
-  instrumentos?: string;
-  teoricas?: string;
-  otros?: string;
-  autorizacion?: boolean;
-  activo?: number;
-  id_usuario?: number;
-  created_at?: string;
-  updated_at?: string;
+  id: number
+  nombre: string
+  genero?: string
+  cedula?: string
+  fecha_nacimiento?: string
+  correo_electronico?: string
+  direccion?: string
+  telefono_estudiantes?: string
+  rif?: string
+  institucion_educacional?: string
+  ocupacion?: string
+  profesion?: string
+  lugar_trabajo?: string
+  alergico_a?: string
+  antecedentes?: string
+  especificacion_antecedentes?: string
+  nombre_emergencia?: string
+  numero_emergencia?: string
+  nombre_representante?: string
+  cedula_representante?: string
+  parentesco?: string
+  telefono_representante?: string
+  ocupacion_representante?: string
+  profesion_representante?: string
+  lugar_trabajo_representante?: string
+  direccion_representante?: string
+  rif_representante?: string
+  email_representante?: string
+  instrumentos?: string
+  teoricas?: string
+  otros?: string
+  autorizacion?: boolean
+  activo?: number
+  id_usuario?: number
+  created_at?: string
+  updated_at?: string
 }
 
 export interface Nota {
-  nota_final: number;
-  nivel_inicial: string;
-  siguiente_nivel: string;
-  materia: string;
-  periodo: string;
-  fecha_periodo: string;
-  profesor: string;
+  nota_final: number
+  nivel_inicial: string
+  siguiente_nivel: string
+  materia: string
+  periodo: string
+  fecha_periodo: string
+  profesor: string
 }
 
 export interface Catedra {
-  id: number;
-  nombre: string;
-  tipo: string;
+  id: number
+  nombre: string
+  tipo: string
 }
 
 export interface AspiranteRequest {
-  nombre: string;
-  genero?: string;
-  cedula?: string;
-  fecha_nacimiento?: string;
-  correo_electronico?: string;
-  direccion?: string;
-  telefono_estudiantes?: string;
-  rif?: string;
-  institucion_educacional?: string;
-  ocupacion?: string;
-  profesion?: string;
-  lugar_trabajo?: string;
-  alergico_a?: string;
-  antecedentes?: string;
-  especificacion_antecedentes?: string;
-  nombre_emergencia?: string;
-  numero_emergencia?: string;
-  nombre_representante?: string;
-  cedula_representante?: string;
-  parentesco?: string;
-  telefono_representante?: string;
-  ocupacion_representante?: string;
-  profesion_representante?: string;
-  lugar_trabajo_representante?: string;
-  direccion_representante?: string;
-  rif_representante?: string;
-  email_representante?: string;
-  instrumentos?: string;
-  teoricas?: string;
-  otros?: string;
-  autorizacion?: boolean;
+  nombre: string
+  genero?: string
+  cedula?: string
+  fecha_nacimiento?: string
+  correo_electronico?: string
+  direccion?: string
+  telefono_estudiantes?: string
+  rif?: string
+  institucion_educacional?: string
+  ocupacion?: string
+  profesion?: string
+  lugar_trabajo?: string
+  alergico_a?: string
+  antecedentes?: string
+  especificacion_antecedentes?: string
+  nombre_emergencia?: string
+  numero_emergencia?: string
+  nombre_representante?: string
+  cedula_representante?: string
+  parentesco?: string
+  telefono_representante?: string
+  ocupacion_representante?: string
+  profesion_representante?: string
+  lugar_trabajo_representante?: string
+  direccion_representante?: string
+  rif_representante?: string
+  email_representante?: string
+  instrumentos?: string
+  teoricas?: string
+  otros?: string
+  autorizacion?: boolean
 }
 
 // Utility function to get auth token
 const getAuthToken = (): string | null => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem('auth_token');
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("auth_token")
   }
-  return null;
-};
+  return null
+}
 
 // Utility function to set auth token
 const setAuthToken = (token: string): void => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('auth_token', token);
+  if (typeof window !== "undefined") {
+    localStorage.setItem("auth_token", token)
   }
-};
+}
 
 // Utility function to remove auth token
 const removeAuthToken = (): void => {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('auth_token');
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("auth_token")
   }
-};
+}
 
 // Generic API request function
 async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
-  const token = getAuthToken();
+  const url = `${API_BASE_URL}${endpoint}`
+  const token = getAuthToken()
 
   const defaultHeaders: HeadersInit = {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-  };
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  }
 
   if (token) {
-    defaultHeaders['Authorization'] = `Bearer ${token}`;
+    defaultHeaders["Authorization"] = `Bearer ${token}`
   }
 
   const config: RequestInit = {
@@ -157,235 +157,264 @@ async function apiRequest<T>(
       ...defaultHeaders,
       ...options.headers,
     },
-  };
+  }
 
   try {
-    const response = await fetch(url, config);
-    const data = await response.json();
+    const response = await fetch(url, config)
+    const data = await response.json()
 
     if (!response.ok) {
-      throw new Error(data.message || `HTTP error! status: ${response.status}`);
+      throw new Error(data.message || `HTTP error! status: ${response.status}`)
     }
 
-    return data;
+    return data
   } catch (error) {
-    console.error(`API request failed for ${endpoint}:`, error);
-    throw error;
+    console.error(`API request failed for ${endpoint}:`, error)
+    throw error
   }
 }
 
 // Authentication API calls
 export const authApi = {
   login: async (credentials: LoginRequest): Promise<LoginResponse> => {
-    const response = await apiRequest<LoginResponse>('estudiante/login', {
-      method: 'POST',
+    const response = await apiRequest<LoginResponse>("/estudiante/login", {
+      method: "POST",
       body: JSON.stringify(credentials),
-    });
+    })
+
+    console.log(response)
 
     if (response.token) {
-      setAuthToken(response.token);
+      setAuthToken(response.token)
     }
 
-    return response;
+    return response
   },
 
   logout: async (): Promise<{ message: string }> => {
-    const response = await apiRequest<{ message: string }>('/logout', {
-      method: 'POST',
-    });
+    const response = await apiRequest<{ message: string }>("/logout", {
+      method: "POST",
+    })
 
-    removeAuthToken();
-    return response;
+    removeAuthToken()
+    return response
   },
 
   createUser: async (userData: CreateUserRequest): Promise<any> => {
-    return apiRequest('/estudiante/create-user', {
-      method: 'POST',
+    return apiRequest("/estudiante/create-user", {
+      method: "POST",
       body: JSON.stringify(userData),
-    });
+    })
   },
 
   getCurrentUser: async (): Promise<any> => {
-    return apiRequest('/estudiante/user');
+    return apiRequest("/estudiante/user")
   },
-};
+}
 
 // Student profile API calls
 export const studentApi = {
-  getProfile: async (studentId: number): Promise<{ message: string; data: Estudiante }> => {
-    return apiRequest(`/perfil-estudiante/${studentId}`);
+  getProfile: async (
+    studentId: number
+  ): Promise<{ message: string; data: Estudiante }> => {
+    return apiRequest(`/perfil-estudiante/${studentId}`)
   },
 
-  getGrades: async (studentId: number): Promise<{ message: string; data: Nota[] }> => {
-    return apiRequest('/perfil-estudiante/notas', {
-      method: 'POST',
+  getGrades: async (
+    studentId: number
+  ): Promise<{ message: string; data: Nota[] }> => {
+    return apiRequest("/perfil-estudiante/notas", {
+      method: "POST",
       body: JSON.stringify({ id: studentId }),
-    });
+    })
   },
 
   generatePlanilla: async (studentData: any): Promise<Blob> => {
-    const url = `${API_BASE_URL}/perfil-estudiante/generar-planilla`;
-    const token = getAuthToken();
+    const url = `${API_BASE_URL}/perfil-estudiante/generar-planilla`
+    const token = getAuthToken()
 
     const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/pdf',
-    };
+      "Content-Type": "application/json",
+      Accept: "application/pdf",
+    }
 
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers["Authorization"] = `Bearer ${token}`
     }
 
     const response = await fetch(url, {
-      method: 'POST',
+      method: "POST",
       headers,
       body: JSON.stringify(studentData),
-    });
+    })
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status}`)
     }
 
-    return response.blob();
+    return response.blob()
   },
-};
+}
 
 // Applicants API calls
 export const aspiranteApi = {
-  getByIds: async (ids: number[]): Promise<{ message: string; data: any[] }> => {
-    return apiRequest('/aspirantes', {
-      method: 'POST',
+  getByIds: async (
+    ids: number[]
+  ): Promise<{ message: string; data: any[] }> => {
+    return apiRequest("/aspirantes", {
+      method: "POST",
       body: JSON.stringify({ id: ids }),
-    });
+    })
   },
 
-  create: async (aspiranteData: AspiranteRequest): Promise<{ message: string; id: number }> => {
-    return apiRequest('/aspirantes', {
-      method: 'POST',
+  create: async (
+    aspiranteData: AspiranteRequest
+  ): Promise<{ message: string; id: number }> => {
+    return apiRequest("/aspirantes", {
+      method: "POST",
       body: JSON.stringify(aspiranteData),
-    });
+    })
   },
 
-  update: async (studentId: number, userId: number): Promise<{ message: string }> => {
-    return apiRequest('/aspirantes', {
-      method: 'PUT',
+  update: async (
+    studentId: number,
+    userId: number
+  ): Promise<{ message: string }> => {
+    return apiRequest("/aspirantes", {
+      method: "PUT",
       body: JSON.stringify({ id: studentId, id_usuario: userId }),
-    });
+    })
   },
-};
+}
 
 // Students management API calls
 export const estudianteApi = {
-  getByIds: async (ids: number[]): Promise<{ message: string; data: Estudiante[] }> => {
-    return apiRequest('/estudiantes', {
-      method: 'POST',
+  getByIds: async (
+    ids: number[]
+  ): Promise<{ message: string; data: Estudiante[] }> => {
+    return apiRequest("/estudiantes", {
+      method: "POST",
       body: JSON.stringify({ id: ids }),
-    });
+    })
   },
 
-  create: async (estudianteData: Partial<Estudiante>): Promise<{ message: string; id: number }> => {
-    return apiRequest('/estudiantes', {
-      method: 'POST',
+  create: async (
+    estudianteData: Partial<Estudiante>
+  ): Promise<{ message: string; id: number }> => {
+    return apiRequest("/estudiantes", {
+      method: "POST",
       body: JSON.stringify(estudianteData),
-    });
+    })
   },
 
-  update: async (studentId: number, estudianteData: { id_usuario: number }): Promise<{ message: string }> => {
+  update: async (
+    studentId: number,
+    estudianteData: { id_usuario: number }
+  ): Promise<{ message: string }> => {
     return apiRequest(`/estudiantes/${studentId}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify(estudianteData),
-    });
+    })
   },
-};
+}
 
 // Wait list interface matching your Laravel controller response
 export interface ListaEsperaItem {
-  id: number;
-  nombre: string;
-  fecha_nacimiento: string;
-  genero: string;
-  cedula: string;
-  rif: string;
-  telefono: string; // mapped from telefono_estudiantes
-  institucion_educacional: string;
-  ocupacion: string;
-  profesion: string;
-  lugar_trabajo: string;
-  email: string; // mapped from correo_electronico
-  direccion: string;
-  alergico_a: string;
-  antecedentes: string;
-  especificacion_antecedentes: string;
-  nombre_representante: string;
-  cedula_representante: string;
-  rif_representante: string;
-  parentesco: string;
-  telefono_representante: string;
-  ocupacion_representante: string;
-  profesion_representante: string;
-  lugar_trabajo_representante: string;
-  direccion_representante: string;
-  email_representante: string;
-  nombre_emergencia: string;
-  numero_emergencia: string;
-  instrumentos: string;
-  teoricas: string;
-  otros: string;
-  autorizacion: string;
-  estado: number;
+  id: number
+  nombre: string
+  fecha_nacimiento: string
+  genero: string
+  cedula: string
+  rif: string
+  telefono: string // mapped from telefono_estudiantes
+  institucion_educacional: string
+  ocupacion: string
+  profesion: string
+  lugar_trabajo: string
+  email: string // mapped from correo_electronico
+  direccion: string
+  alergico_a: string
+  antecedentes: string
+  especificacion_antecedentes: string
+  nombre_representante: string
+  cedula_representante: string
+  rif_representante: string
+  parentesco: string
+  telefono_representante: string
+  ocupacion_representante: string
+  profesion_representante: string
+  lugar_trabajo_representante: string
+  direccion_representante: string
+  email_representante: string
+  nombre_emergencia: string
+  numero_emergencia: string
+  instrumentos: string
+  teoricas: string
+  otros: string
+  autorizacion: string
+  estado: number
 }
 
 // Wait list API calls
 export const listaEsperaApi = {
   getAll: async (): Promise<{ message: string; data: ListaEsperaItem[] }> => {
-    return apiRequest('/lista-espera');
+    return apiRequest("/lista-espera")
   },
 
   create: async (id_estudiante: number): Promise<{ message: string }> => {
-    return apiRequest('/lista-espera', {
-      method: 'POST',
+    return apiRequest("/lista-espera", {
+      method: "POST",
       body: JSON.stringify({ id_estudiante }),
-    });
+    })
   },
 
-  update: async (studentId: number, estado: number): Promise<{ message: string }> => {
+  update: async (
+    studentId: number,
+    estado: number
+  ): Promise<{ message: string }> => {
     return apiRequest(`/lista-espera/${studentId}`, {
-      method: 'PUT',
+      method: "PUT",
       body: JSON.stringify({ estado }),
-    });
+    })
   },
-};
+}
 
 // Subjects API calls
 export const catedraApi = {
-  getAll: async (): Promise<{ message: string; data: Catedra[]; grupales: { nombre: string; id: number }[] }> => {
-    return apiRequest('/catedras');
+  getAll: async (): Promise<{
+    message: string
+    data: Catedra[]
+    grupales: { nombre: string; id: number }[]
+  }> => {
+    return apiRequest("/catedras")
   },
-};
+}
 
 // User creation API calls
 export const userApi = {
-  createUser: async (id_estudiante: number): Promise<{ message: string; id: number }> => {
-    return apiRequest('/estudiante/user', {
-      method: 'POST',
+  createUser: async (
+    id_estudiante: number
+  ): Promise<{ message: string; id: number }> => {
+    return apiRequest("/estudiante/user", {
+      method: "POST",
       body: JSON.stringify({ id_estudiante }),
-    });
+    })
   },
-};
+}
 
 // Migration API calls
 export const migracionApi = {
   createUsers: async (userData: any): Promise<ApiResponse<any>> => {
-    return apiRequest('/migracion/crear-usuarios', {
-      method: 'POST',
+    return apiRequest("/migracion/crear-usuarios", {
+      method: "POST",
       body: JSON.stringify(userData),
-    });
+    })
   },
-};
+}
 
 // Utility functions
 export const apiUtils = {
   setAuthToken,
   getAuthToken,
   removeAuthToken,
-};
+}
