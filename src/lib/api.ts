@@ -1,6 +1,4 @@
-
 import { API_BASE_URL } from "../config/api"
-
 
 // Types for API responses
 export interface ApiResponse<T> {
@@ -122,7 +120,6 @@ const getAuthToken = (): string | null => {
   return null
 }
 
-
 // Utility function to set auth token - deprecated, use sessionManager.saveSession instead
 const setAuthToken = (token: string): void => {
   if (typeof window !== "undefined") {
@@ -187,7 +184,6 @@ export const authApi = {
 
     if (response.token) {
       setAuthToken(response.token)
-
     }
 
     return response
@@ -358,11 +354,11 @@ export interface ListaEsperaItem {
 // Wait list API calls
 export const listaEsperaApi = {
   getAll: async (): Promise<{ message: string; data: ListaEsperaItem[] }> => {
-    return apiRequest("/lista-espera")
+    return apiRequest("/admin/lista-espera")
   },
 
   create: async (id_estudiante: number): Promise<{ message: string }> => {
-    return apiRequest("/lista-espera", {
+    return apiRequest("/admin/lista-espera", {
       method: "POST",
       body: JSON.stringify({ id_estudiante }),
     })
@@ -372,7 +368,7 @@ export const listaEsperaApi = {
     studentId: number,
     estado: number
   ): Promise<{ message: string }> => {
-    return apiRequest(`/lista-espera/${studentId}`, {
+    return apiRequest(`/admin/lista-espera/${studentId}`, {
       method: "PUT",
       body: JSON.stringify({ estado }),
     })

@@ -32,14 +32,14 @@ export default function LogIn() {
 
         // Check user role - assuming the UserResource includes role information
         // You may need to adjust this based on your UserResource structure
-        const userRole = response.user.role.id
+        const userRole = response.user.role
 
         // Redirect based on role
         switch (userRole) {
-          case 1:
+          case "admin":
             window.location.href = "/administrador"
             break
-          case 3:
+          case "estudiante":
             window.location.href = "/estudiante"
             break
           default:
@@ -48,9 +48,8 @@ export default function LogIn() {
             break
         }
       } else {
-
-        setError("Respuesta del servidor incompleta. Faltan datos de sesión.");
-        setShowModal(true);
+        setError("Respuesta del servidor incompleta. Faltan datos de sesión.")
+        setShowModal(true)
       }
     } catch (error) {
       console.error("Login error:", error)
