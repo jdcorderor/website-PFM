@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '../config/api';
+import { sessionManager } from './session';
 
 // Types for API responses
 export interface ApiResponse<T> {
@@ -13,6 +14,7 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   token: string;
+  student_id: number;
   user: any; // UserResource from Laravel
 }
 
@@ -112,26 +114,21 @@ export interface AspiranteRequest {
   autorizacion?: boolean;
 }
 
-// Utility function to get auth token
+// Utility function to get auth token - now uses session manager
 const getAuthToken = (): string | null => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem('auth_token');
-  }
-  return null;
+  return sessionManager.getAuthToken();
 };
 
-// Utility function to set auth token
+// Utility function to set auth token - deprecated, use sessionManager.saveSession instead
 const setAuthToken = (token: string): void => {
   if (typeof window !== 'undefined') {
     localStorage.setItem('auth_token', token);
   }
 };
 
-// Utility function to remove auth token
+// Utility function to remove auth token - now uses session manager
 const removeAuthToken = (): void => {
-  if (typeof window !== 'undefined') {
-    localStorage.removeItem('auth_token');
-  }
+  sessionManager.clearSession();
 };
 
 // Generic API request function
@@ -182,8 +179,13 @@ export const authApi = {
       body: JSON.stringify(credentials),
     });
     
-    if (response.token) {
-      setAuthToken(response.token);
+    // Save complete session data using sessionManager
+    if (response.token && response.student_id && response.user) {
+      sessionManager.saveSession({
+        token: response.token,
+        student_id: response.student_id,
+        user: response.user
+      });
     }
     
     return response;
@@ -194,7 +196,8 @@ export const authApi = {
       method: 'POST',
     });
     
-    removeAuthToken();
+    // Session will be cleared by the calling component (header)
+    // to ensure proper cleanup
     return response;
   },
 

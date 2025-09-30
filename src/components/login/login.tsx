@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { authApi, type LoginRequest } from "../../lib/api";
+import { sessionManager } from "../../lib/session";
 
 export default function LogIn() {
   // State variables for login form fields
@@ -26,12 +27,11 @@ export default function LogIn() {
     try {
       const response = await authApi.login(credentials);
       
-      if (response.user) {
-        // Store user data in localStorage for later use
-        localStorage.setItem('user_data', JSON.stringify(response.user));
+      if (response.user && response.token && response.student_id) {
+        // Session data is now automatically saved by the authApi.login method
+        // using sessionManager.saveSession()
         
-        // Check user role - assuming the UserResource includes role information
-        // You may need to adjust this based on your UserResource structure
+        // Check user role
         const userRole = response.user.role?.name || response.user.role_name || response.user.role;
         
         // Redirect based on role
@@ -50,7 +50,7 @@ export default function LogIn() {
             break;
         }
       } else {
-        setError("Respuesta del servidor inválida.");
+        setError("Respuesta del servidor incompleta. Faltan datos de sesión.");
         setShowModal(true);
       }
     } catch (error) {

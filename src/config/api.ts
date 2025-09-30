@@ -1,7 +1,7 @@
 // API Configuration for different environments
 export const API_CONFIG = {
   development: {
-    baseUrl: 'http://localhost:8080/api',
+    baseUrl: 'http://localhost:8000/api',
   },
   
   production: {

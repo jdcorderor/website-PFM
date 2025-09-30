@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { studentApi, type Estudiante, type Nota } from "../../lib/api";
+import { sessionManager } from "../../lib/session";
 
 // Function for grouping grades by subject
 function groupBySubject(notas: Nota[]): Record<string, Nota[]> {
@@ -33,17 +34,14 @@ export default function Student() {
             try {
                 setLoadingStudent(true);
                 
-                // Get user data from localStorage (set during login)
-                const userData = localStorage.getItem('user_data');
-                if (!userData) {
-                    setStudentError("No se encontraron datos de usuario. Por favor, inicie sesión nuevamente.");
+                // Get student ID from session manager
+                const studentId = sessionManager.getStudentId();
+                if (!studentId) {
+                    setStudentError("No se encontró el ID del estudiante. Por favor, inicie sesión nuevamente.");
                     setLoadingStudent(false);
                     return;
                 }
 
-                const user = JSON.parse(userData);
-                // Use the student ID from the user data (assuming it's linked via id_estudiante)
-                const studentId = user.id_estudiante || user.id;
                 const response = await studentApi.getProfile(studentId);
                 
                 if (response.data) {
@@ -68,17 +66,14 @@ export default function Student() {
             try {
                 setLoadingGrades(true);
                 
-                // Get user data from localStorage
-                const userData = localStorage.getItem('user_data');
-                if (!userData) {
-                    setGradesError("No se encontraron datos de usuario.");
+                // Get student ID from session manager
+                const studentId = sessionManager.getStudentId();
+                if (!studentId) {
+                    setGradesError("No se encontró el ID del estudiante.");
                     setLoadingGrades(false);
                     return;
                 }
 
-                const user = JSON.parse(userData);
-                // Use the student ID from the user data
-                const studentId = user.id_estudiante || user.id;
                 const response = await studentApi.getGrades(studentId);
                 
                 if (response.data && Array.isArray(response.data)) {
