@@ -11,7 +11,9 @@ export default function History() {
     useEffect(() => {
         const observer = new IntersectionObserver(
         ([entry]) => {
-            setGridVisible(entry.isIntersecting);
+            if (entry.isIntersecting) {
+                setGridVisible(true);
+            } 
         },
         { threshold: 0 }
         );
@@ -32,7 +34,9 @@ export default function History() {
     useEffect(() => {
         const observer = new IntersectionObserver(
         ([entry]) => {
-            setHistoryVisible(entry.isIntersecting);
+            if (entry.isIntersecting) {
+                setHistoryVisible(true);
+            }
         },
         { threshold: 0 }
         );
@@ -53,7 +57,9 @@ export default function History() {
     useEffect(() => {
         const observer = new IntersectionObserver(
         ([entry]) => {
-            setAltGridVisible(entry.isIntersecting);
+            if (entry.isIntersecting) {
+                setAltGridVisible(true);
+            }
         },
         { threshold: 0 }
         );

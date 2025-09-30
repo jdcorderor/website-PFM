@@ -278,7 +278,7 @@ export default function Administrator() {
         ) : error ? (
           <p className="text-lg font-montserrat text-gray-700 font-bold text-center w-full">{error}</p>
         ) : (
-          <div className="w-full overflow-x-auto max-h-[60vh]">
+          <div className="w-full overflow-auto max-h-[60vh]">
             <table className="w-full divide-y divide-gray-200">
               <thead className="bg-gray-100">
                 <tr className="hover:bg-gray-50">

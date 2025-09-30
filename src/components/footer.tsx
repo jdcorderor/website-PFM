@@ -21,7 +21,9 @@ export default function Footer() {
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
-                setVisible(entry.isIntersecting);
+                if (entry.isIntersecting) {
+                    setVisible(true);
+                }
             },
             { threshold: 0.2 }
         );
