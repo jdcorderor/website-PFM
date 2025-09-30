@@ -10,7 +10,7 @@ function groupBySubject(notas: Nota[]): Record<string, Nota[]> {
         return acc;
     }, {} as Record<string, Nota[]>);
 }
-  
+
 export default function Student() {
     // State variable for student data
     const [student, setStudent] = useState<Estudiante | null>(null);
@@ -43,7 +43,7 @@ export default function Student() {
                 }
 
                 const response = await studentApi.getProfile(studentId);
-                
+
                 if (response.data) {
                     setStudent(response.data);
                 } else {
@@ -59,7 +59,7 @@ export default function Student() {
 
         fetchStudentData();
     }, []);
-    
+
     // Get student's grades using fetch
     useEffect(() => {
         const fetchGrades = async () => {
@@ -75,7 +75,7 @@ export default function Student() {
                 }
 
                 const response = await studentApi.getGrades(studentId);
-                
+
                 if (response.data && Array.isArray(response.data)) {
                     const groupedGrades = groupBySubject(response.data);
                     setGrades(groupedGrades);
@@ -99,7 +99,11 @@ export default function Student() {
     if (loadingStudent) {
         return (
             <div className="flex flex-col w-full h-120 md:h-150 items-center justify-center">
-                <p className="text-lg font-montserrat text-gray-700 font-bold">Cargando...</p>
+                <div className="absolute inset-0 z-0 w-full">
+                    <img src="/background.png" className="w-full h-full" />
+                </div>
+                
+                <p className="md:text-lg font-montserrat text-gray-700 font-bold text-center z-10 mx-8 md:mx-0">Cargando...</p>
             </div>
         );
     }
@@ -107,22 +111,34 @@ export default function Student() {
     if (studentError) {
         return (
             <div className="flex flex-col w-full h-120 md:h-150 items-center justify-center">
-                <p className="text-xl font-montserrat text-red-500 font-bold">Error: {studentError}</p>
+                <div className="absolute inset-0 z-0 w-full">
+                    <img src="/background.png" className="w-full h-full" />
+                </div>
+
+                <p className="md:text-xl font-montserrat text-red-500 font-bold text-center z-10 mx-8 md:mx-0">Error: {studentError}</p>
             </div>
         );
     }
-    
+
     if (!loadingStudent && !student) {
         return (
             <div className="flex flex-col w-full h-120 md:h-150 items-center justify-center">
-                <p className="text-xl font-montserrat text-red-500 font-bold">Error: Estudiante no encontrado.</p>
+                <div className="absolute inset-0 z-0 w-full">
+                    <img src="/background.png" className="w-full h-full" />
+                </div>
+
+                <p className="md:text-xl font-montserrat text-red-500 font-bold text-center z-10 mx-8 md:mx-0">Error: Estudiante no encontrado.</p>
             </div>
         );
     }
 
     return (
         <section id="student">
-            <div className="flex flex-col md:w-[75%] py-8 md:py-16 mx-auto gap-8 md:gap-12">
+            <div className="absolute inset-0 z-0 w-full">
+                <img src="/background.png" className="w-full h-full" />
+            </div>
+
+            <div className="flex flex-col md:w-[75%] py-8 md:py-16 mx-auto gap-8 md:gap-12 relative z-10">
                 <div className="flex flex-col w-full items-center py-8 gap-6 md:border border-gray-200 rounded-lg">
                     <h2 className="text-2xl font-montserrat text-gray-800 font-bold text-center w-[85%] md:w-[80%] pb-4 border-b border-gray-200">Información personal</h2>
                     <div className="flex flex-col md:flex-row w-[85%] md:w-[80%] items-start justify-center gap-6 md:gap-16">

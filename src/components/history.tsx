@@ -69,7 +69,7 @@ export default function History() {
                     <div className={`w-full grid grid-cols-3 gap-1 ${ gridVisible ? "slide-from-left" : "opacity-0" }`}>
                         {["grid1.JPG", "grid2.JPG", "grid3.JPG", "grid4.JPG", "grid5.JPG", "grid6.JPG", "grid7.JPG"].map((img, i) => (
                             <div key={i} className={`relative w-full h-full md:h-[33.3vh] ${img === "grid1.JPG" || img === "grid7.JPG" ? "col-span-2 " : ""}`}>
-                                <img src={`/history/${img}`} alt="Programa de Formación Musical - Maestro José Calabrese" className="w-full h-full object-cover" />
+                                <img src={`/history/${img}`} alt="Academia Internacional de Música - Maestro José Calabrese" className="w-full h-full object-cover" />
                                 <div className="absolute inset-0 bg-black opacity-30 z-10 pointer-events-none"></div>
                             </div>
                         ))}
@@ -87,22 +87,25 @@ export default function History() {
                 <div className={`relative inset-0 z-10 flex flex-col w-[85vw] gap-12 mx-auto ${ historyVisible ? "slide-from-bottom" : "opacity-0" }`}>
                     <div className="flex flex-col gap-10">
                         <h2 className="text-3xl md:text-5xl font-montserrat text-white font-bold text-center md:leading-[7vh]">Nuestra historia, <span className="text-[#BFA760]">nuestro legado</span></h2>
-                        <div className="grid md:grid-cols-2 gap-4 md:gap-16 px-8 mx-auto">
+                        <div className="grid md:grid-cols-2 gap-4 md:gap-16 px-4 md:px-8 mx-auto">
                             <div className="flex flex-col gap-4">
                                 <p className="md:text-xl font-montserrat text-white text-center md:text-justify">
-                                    El <b>Programa de Formación Musical "Maestro José Calabrese"</b> nace un 7 de octubre de 2019. Fundado por el maestro <b>José Carmelo Calabrese</b>, este programa tiene como objetivo la 
+                                    La <b>Academia Internacional de Música "Maestro José Calabrese"</b> nace un 7 de octubre de 2019. Fundada por el maestro <b>José Carmelo Calabrese</b>, esta academia tiene como objetivo la 
                                     formación musical y artística integral de los nuevos músicos del Estado Carabobo y Venezuela, creando así, las generaciones de relevo de la <b>Orquesta Sinfónica de Carabobo</b>.
                                 </p>
                                 <p className="md:text-xl font-montserrat text-white text-center md:text-justify">
-                                    Este programa académico lleva el nombre del Director Laureado de la <b>Orquesta Sinfónica de Carabobo</b>, maestro <b>José Calabrese</b> (padre). Actualmente cuenta con alianzas 
+                                    Esta institución lleva el nombre del Director Laureado de la <b>Orquesta Sinfónica de Carabobo</b>, maestro <b>José Calabrese</b> (padre). Actualmente cuenta con alianzas 
                                     estratégicas y académicas con organizaciones en países como Venezuela, Estados Unidos, Colombia y Brasil, además de tener el aval internacional de la UNESCO.
                                 </p>
                             </div>
-                            <div className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-5">
                                 <p className="md:text-xl font-montserrat text-white text-center md:text-justify">
-                                    El programa se sustenta en la experiencia de casi 50 años en la enseñanza y práctica de la música sinfónica de la <b>Fundación Orquesta Sinfónica de Carabobo</b>, en cuyo seno han complementado y desarrollado 
+                                    La academia se sustenta en la experiencia de casi 50 años en la enseñanza y práctica de la música sinfónica de la <b>Fundación Orquesta Sinfónica de Carabobo</b>, en cuyo seno han complementado y desarrollado 
                                     su formación artística un importante número de músicos y agrupaciones con demostrado talento, algunos de los cuales en su papel de docentes artistas actualmente tienen la responsabilidad de formar a las nuevas 
-                                    generaciones de músicos de la <b>OSC</b> en el marco del programa.
+                                    generaciones de músicos de la <b>OSC</b>, en el marco de nuestros programas.
+                                </p>
+                                <p className="text-2xl md:text-4xl font-montserrat text-white font-bold text-center md:text-right py-4 md:py-0 px-0 md:px-6 mt-4 md:mt-0 border-t-3 md:border-t-0 border-r-0 md:border-r-5 border-[#BFA760]">
+                                    <i>Formando músicos profesionales</i>
                                 </p>
                             </div>
                         </div>
@@ -112,7 +115,7 @@ export default function History() {
 
             <section ref={altGridRef} className="relative w-full min-h-400 md:min-h-screen">
                 <div className="absolute inset-0 z-0 grid md:grid-cols-2 w-full border-t-6 border-white">
-                    <div className={`flex w-full bg-gradient-to-b from-[#7A5C20] to-[#BFA75A] px-12 md:px-24 items-center ${ altGridVisible ? "slide-from-left" : "opacity-0" }`}>
+                    <div className={`flex w-full bg-gradient-to-b from-[#7A5C20] to-[#BFA75A] px-10 md:px-24 items-center ${ altGridVisible ? "slide-from-left" : "opacity-0" }`}>
                         <div className="flex flex-col gap-8 py-16 md:py-0">
                             <h2 className="text-3xl md:text-5xl font-montserrat text-white font-bold text-center md:text-left">El maestro, <br /> José Calabrese</h2>
                             
@@ -136,7 +139,7 @@ export default function History() {
                         </div>
                     </div>
                     
-                    <div className={`relative w-full border-t-6 md:border-t-0 md:border-l-6 border-white ${ altGridVisible ? "slide-from-right" : "opacity-0" }`}>
+                    <div className={`relative w-full h-96 md:h-full border-t-6 md:border-t-0 md:border-l-6 border-white ${ altGridVisible ? "slide-from-right" : "opacity-0" }`}>
                         <div className="grid grid-cols-2 gap-1">
                             <div className="flex flex-col gap-1">
                                 <div className="relative">

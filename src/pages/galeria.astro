@@ -1,0 +1,12 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/ui/alt-header";
+import Gallery from "../components/gallery/gallery";
+import Footer from "../components/footer";
+---
+
+<Layout>
+    <Header client:load />
+    <Gallery client:load />
+    <Footer client:load />
+</Layout>

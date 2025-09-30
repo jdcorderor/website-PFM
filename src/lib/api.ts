@@ -174,7 +174,7 @@ async function apiRequest<T>(
 // Authentication API calls
 export const authApi = {
   login: async (credentials: LoginRequest): Promise<LoginResponse> => {
-    const response = await apiRequest<LoginResponse>('/estudiante/login', {
+    const response = await apiRequest<LoginResponse>('estudiante/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
@@ -187,12 +187,12 @@ export const authApi = {
         user: response.user
       });
     }
-    
+
     return response;
   },
 
   logout: async (): Promise<{ message: string }> => {
-    const response = await apiRequest<{ message: string }>('/estudiante/logout', {
+    const response = await apiRequest<{ message: string }>('/logout', {
       method: 'POST',
     });
     
