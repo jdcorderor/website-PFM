@@ -1,4 +1,6 @@
+
 import { API_BASE_URL } from "../config/api"
+
 
 // Types for API responses
 export interface ApiResponse<T> {
@@ -112,7 +114,7 @@ export interface AspiranteRequest {
   autorizacion?: boolean
 }
 
-// Utility function to get auth token
+// Utility function to get auth token - now uses session manager
 const getAuthToken = (): string | null => {
   if (typeof window !== "undefined") {
     return localStorage.getItem("auth_token")
@@ -120,14 +122,15 @@ const getAuthToken = (): string | null => {
   return null
 }
 
-// Utility function to set auth token
+
+// Utility function to set auth token - deprecated, use sessionManager.saveSession instead
 const setAuthToken = (token: string): void => {
   if (typeof window !== "undefined") {
     localStorage.setItem("auth_token", token)
   }
 }
 
-// Utility function to remove auth token
+// Utility function to remove auth token - now uses session manager
 const removeAuthToken = (): void => {
   if (typeof window !== "undefined") {
     localStorage.removeItem("auth_token")
@@ -184,6 +187,7 @@ export const authApi = {
 
     if (response.token) {
       setAuthToken(response.token)
+
     }
 
     return response

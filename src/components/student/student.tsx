@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react"
 import { studentApi, type Estudiante, type Nota } from "../../lib/api"
 

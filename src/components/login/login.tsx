@@ -24,8 +24,6 @@ export default function LogIn() {
     }
 
     try {
-      console.log(username, password)
-
       const response = await authApi.login(credentials)
 
       if (response.user) {
@@ -50,8 +48,9 @@ export default function LogIn() {
             break
         }
       } else {
-        setError("Respuesta del servidor inválida.")
-        setShowModal(true)
+
+        setError("Respuesta del servidor incompleta. Faltan datos de sesión.");
+        setShowModal(true);
       }
     } catch (error) {
       console.error("Login error:", error)
