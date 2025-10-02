@@ -21,7 +21,6 @@ export default function HeroSection() {
     { href: "#aliados", label: "Aliados" },
     { href: "/programa-t21-down", label: "Programa T21 Down" },
     { href: "/galeria", label: "Galería" },
-    { href: "/registro", label: "Inscripción" },
     { href: "#contacto", label: "Contacto" }
   ]
 
@@ -43,10 +42,6 @@ export default function HeroSection() {
           setTimeout(() => { setTitleVisible(true); }, 750);
           setTimeout(() => { setPhraseVisible(true); }, 1500);
           setTimeout(() => { setButtonsVisible(true); }, 2250);
-        } else {
-          setTitleVisible(false);
-          setPhraseVisible(false);
-          setButtonsVisible(false);
         }
       },
       { threshold: 0 }
@@ -84,8 +79,9 @@ export default function HeroSection() {
           </nav>
           
           {/* Login button */}
-          <div className="hidden lg:flex lg:w-1/5 items-center justify-end">
-            <a href="/login" className="flex w-fit items-center justify-center bg-[#C19310] hover:bg-[#a57f0d] gap-1 px-6 py-[0.8vh] rounded-full md:text-sm font-montserrat text-white font-medium duration-300 cursor-pointer">Iniciar sesión <ChevronRight className="w-5 h-5"></ChevronRight></a>
+          <div className="hidden lg:flex lg:w-1/5 items-center justify-end gap-2">
+            <a href="/registro" className="flex w-fit items-center justify-center bg-[#C19310] hover:bg-[#a57f0d] gap-1 px-4 py-[0.8vh] rounded-full md:text-sm font-montserrat text-white font-medium duration-300 cursor-pointer">Inscripción</a>
+            <a href="/login" className="flex w-fit items-center justify-center bg-[#C19310] hover:bg-[#a57f0d] gap-[2px] px-4 py-[0.8vh] rounded-full md:text-sm font-montserrat text-white font-medium duration-300 cursor-pointer">Iniciar sesión <ChevronRight className="w-5 h-5"></ChevronRight></a>
           </div>
         
           {/* Toggle menu */}
@@ -102,6 +98,7 @@ export default function HeroSection() {
                 {routes.map((route) => (
                   <a key={route.href} href={route.href} className="text-lg font-montserrat text-gray-800 font-medium hover:font-semibold" onClick={() => setIsOpen(false)}>{route.label}</a>
                 ))}
+                <a key="/registro" href="/registro" className="text-lg font-montserrat text-gray-800 font-semibold hover:font-bold" onClick={() => setIsOpen(false)}>Inscripción</a>
                 <a key="/login" href="/login" className="text-lg font-montserrat text-gray-800 font-semibold hover:font-bold" onClick={() => setIsOpen(false)}>Iniciar sesión</a>
               </nav>
             </SheetContent>
