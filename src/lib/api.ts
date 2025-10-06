@@ -333,62 +333,102 @@ export const estudianteApi = {
 }
 
 // Wait list interface matching your Laravel controller response
+export interface AspiranteCatedra {
+  id: number
+  tipo_id: number
+  nombre: string
+  created_at: string
+  updated_at: string
+  siglas: string | null
+  niveles: {
+    etapas: any[]
+    duracion: number
+  }
+  nivelesForNotas: string[]
+  hasPreparatorio: boolean
+  pivot: {
+    aspirante_id: number
+    catedra_id: number
+  }
+  tipo: {
+    id: number
+    nombre: string
+  }
+}
+
 export interface ListaEsperaItem {
   id: number
   nombre: string
-  fecha_nacimiento: string
-  genero: string
-  cedula: string
-  rif: string
-  telefono: string // mapped from telefono_estudiantes
-  institucion_educacional: string
-  ocupacion: string
-  profesion: string
-  lugar_trabajo: string
-  email: string // mapped from correo_electronico
-  direccion: string
-  alergico_a: string
-  antecedentes: string
-  especificacion_antecedentes: string
-  nombre_representante: string
-  cedula_representante: string
-  rif_representante: string
-  parentesco: string
-  telefono_representante: string
-  ocupacion_representante: string
-  profesion_representante: string
-  lugar_trabajo_representante: string
-  direccion_representante: string
-  email_representante: string
-  nombre_emergencia: string
-  numero_emergencia: string
-  instrumentos: string
-  teoricas: string
-  otros: string
-  autorizacion: string
-  estado: number
+  genero?: string | null
+  cedula?: string | null
+  fecha_nacimiento?: string | null
+  correo_electronico?: string | null
+  direccion?: string | null
+  fecha_ingreso?: string | null
+  instrumento?: string | null
+  codigo_instrumento?: string | null
+  nombre_representante?: string | null
+  ocupacion_representante?: string | null
+  parentesco?: string | null
+  cedula_representante?: string | null
+  telefono_estudiantes?: string | null
+  telefono_representante?: string | null
+  nombre_emergencia?: string | null
+  numero_emergencia?: string | null
+  activo?: boolean | number
+  photo_url?: string | null
+  edad?: string | number | null
+  rif?: string | null
+  institucion_educacional?: string | null
+  ocupacion?: string | null
+  profesion?: string | null
+  lugar_trabajo?: string | null
+  alergias?: string | null
+  antecedentes?: string | null
+  alergias_especificadas?: string | null
+  representante_rif?: string | null
+  representante_profesion?: string | null
+  representante_lugar_trabajo?: string | null
+  representante_direccion?: string | null
+  representante_email?: string | null
+  teoricas_data?: string | null
+  otros_data?: string | null
+  autorizacion?: boolean | string | null
+  created_at?: string | null
+  updated_at?: string | null
+  catedras?: AspiranteCatedra[]
+
+  // Campos legados para compatibilidad con implementaciones anteriores
+  telefono?: string | null
+  instrumentos?: string | null
+  teoricas?: string | null
+  otros?: string | null
+  alergico_a?: string | null
+  especificacion_antecedentes?: string | null
+  email?: string | null
+  direccion_representante?: string | null
+  email_representante?: string | null
+  rif_representante?: string | null
+  lugar_trabajo_representante?: string | null
+  profesion_representante?: string | null
+  estado?: number
 }
 
 // Wait list API calls
 export const listaEsperaApi = {
   getAll: async (): Promise<{ message: string; data: ListaEsperaItem[] }> => {
-    return apiRequest("/admin/lista-espera")
+    return apiRequest("/admin/aspirante")
   },
 
-  create: async (id_estudiante: number): Promise<{ message: string }> => {
-    return apiRequest("/admin/lista-espera", {
+  accept: async (studentId: number): Promise<{ message: string }> => {
+    return apiRequest(`/admin/aspirante/accept/${studentId}`, {
       method: "POST",
-      body: JSON.stringify({ id_estudiante }),
     })
   },
 
-  update: async (
-    studentId: number,
-    estado: number
-  ): Promise<{ message: string }> => {
-    return apiRequest(`/admin/lista-espera/${studentId}`, {
-      method: "PUT",
-      body: JSON.stringify({ estado }),
+  reject: async (studentId: number): Promise<{ message: string }> => {
+    return apiRequest(`/admin/aspirante/reject/${studentId}`, {
+      method: "DELETE",
     })
   },
 }

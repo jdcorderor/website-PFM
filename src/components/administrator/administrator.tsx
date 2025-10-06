@@ -3,22 +3,17 @@ import { Eye, Check, X } from "lucide-react"
 
 import { pdf } from "@react-pdf/renderer"
 import PDF from "../pdf/pdf"
-import {
-  listaEsperaApi,
-  estudianteApi,
-  userApi,
-  type ListaEsperaItem,
-} from "../../lib/api"
+import { listaEsperaApi, type ListaEsperaItem } from "../../lib/api"
 
 // ------------------------------------------------------------------
 
 // Function for calculating applicant's age
-const calculateAge = (date: string) => {
+const calculateAge = (date?: string | null) => {
   if (!date) return 0
 
-  date = date.replaceAll("/", "-")
+  const normalizedDate = date.replaceAll("/", "-")
 
-  const birthDate = new Date(date)
+  const birthDate = new Date(normalizedDate)
 
   const today = new Date()
   let age = today.getFullYear() - birthDate.getFullYear()
@@ -32,6 +27,162 @@ const calculateAge = (date: string) => {
 }
 
 // ------------------------------------------------------------------
+
+const normalizeListString = (value?: string | null): string[] => {
+  if (!value) return []
+
+  return value
+    .split(/[,\n;]+/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
+
+const extractCatedraNames = (
+  catedras: ListaEsperaItem["catedras"],
+  typeName: string
+): string[] => {
+  if (!catedras || !Array.isArray(catedras)) return []
+
+  const normalizedType = typeName.toLowerCase()
+
+  return catedras
+    .filter((catedra) =>
+      catedra?.tipo?.nombre
+        ? catedra.tipo.nombre.toLowerCase() === normalizedType
+        : false
+    )
+    .map((catedra) => catedra.nombre)
+    .filter(Boolean)
+}
+
+const getInstrumentSummary = (aspirante: ListaEsperaItem): string => {
+  const values = [
+    ...normalizeListString(aspirante.instrumento as string | undefined),
+    ...normalizeListString(aspirante.instrumentos),
+    ...extractCatedraNames(aspirante.catedras, "Instrumento"),
+  ]
+
+  if (values.length === 0) return "—"
+
+  return Array.from(new Set(values)).join(", ")
+}
+
+const getTeoricasSummary = (aspirante: ListaEsperaItem): string => {
+  const values = [
+    ...normalizeListString(aspirante.teoricas_data ?? undefined),
+    ...normalizeListString(aspirante.teoricas),
+    ...extractCatedraNames(aspirante.catedras, "Teoricas"),
+  ]
+
+  if (values.length === 0) return "—"
+
+  return Array.from(new Set(values)).join(", ")
+}
+
+const formatDate = (value?: string | null): string => {
+  if (!value) return ""
+
+  const parsedDate = new Date(value)
+  if (Number.isNaN(parsedDate.getTime())) {
+    return value
+  }
+
+  return parsedDate.toISOString().split("T")[0]
+}
+
+const formatBoolean = (value?: boolean | string | null): string => {
+  if (typeof value === "boolean") {
+    return value ? "Sí" : "No"
+  }
+
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase()
+    if (["1", "true", "si", "sí"].includes(normalized)) return "Sí"
+    if (["0", "false", "no"].includes(normalized)) return "No"
+  }
+
+  return ""
+}
+
+const getStudentPhone = (aspirante: ListaEsperaItem): string => {
+  return (
+    aspirante.telefono_estudiantes ??
+    (aspirante.telefono as string | undefined) ??
+    ""
+  )
+}
+
+const getStudentEmail = (aspirante: ListaEsperaItem): string => {
+  return aspirante.correo_electronico ?? aspirante.email ?? ""
+}
+
+const getRepresentativeEmail = (aspirante: ListaEsperaItem): string => {
+  return (
+    aspirante.representante_email ??
+    (aspirante.email_representante as string | undefined) ??
+    ""
+  )
+}
+
+const getRepresentativeAddress = (aspirante: ListaEsperaItem): string => {
+  return (
+    aspirante.representante_direccion ??
+    (aspirante.direccion_representante as string | undefined) ??
+    ""
+  )
+}
+
+const getRepresentativeRif = (aspirante: ListaEsperaItem): string => {
+  return (
+    aspirante.representante_rif ??
+    (aspirante.rif_representante as string | undefined) ??
+    ""
+  )
+}
+
+const getRepresentativeProfession = (aspirante: ListaEsperaItem): string => {
+  return (
+    aspirante.representante_profesion ??
+    (aspirante.profesion_representante as string | undefined) ??
+    ""
+  )
+}
+
+const getRepresentativeWorkplace = (aspirante: ListaEsperaItem): string => {
+  return (
+    aspirante.representante_lugar_trabajo ??
+    (aspirante.lugar_trabajo_representante as string | undefined) ??
+    ""
+  )
+}
+
+const getStudentAlergias = (aspirante: ListaEsperaItem): string => {
+  return (
+    aspirante.alergias ?? (aspirante.alergico_a as string | undefined) ?? ""
+  )
+}
+
+const getStudentAlergiasEspecificadas = (
+  aspirante: ListaEsperaItem
+): string => {
+  return (
+    aspirante.alergias_especificadas ??
+    (aspirante.especificacion_antecedentes as string | undefined) ??
+    ""
+  )
+}
+
+const getOtrosSummary = (aspirante: ListaEsperaItem): string => {
+  const values = [
+    ...normalizeListString(aspirante.otros_data ?? undefined),
+    ...normalizeListString(aspirante.otros),
+    ...extractCatedraNames(aspirante.catedras, "Otros"),
+  ]
+
+  if (values.length === 0) return "—"
+
+  return Array.from(new Set(values)).join(", ")
+}
 
 export default function Administrator() {
   // State variable for students data
@@ -83,40 +234,43 @@ export default function Administrator() {
   const handleGeneratePDF = async (e: ListaEsperaItem): Promise<void> => {
     try {
       const body = {
-        photoURL: "",
+        photoURL: e.photo_url || "",
         estudianteNombre: e.nombre || "",
-        estudianteFechaNacimiento: e.fecha_nacimiento || "",
+        estudianteFechaNacimiento: formatDate(e.fecha_nacimiento),
+        estudianteEdad: e.fecha_nacimiento
+          ? String(calculateAge(e.fecha_nacimiento))
+          : "",
         estudianteGenero: e.genero || "",
         estudianteCI: e.cedula || "",
         estudianteRIF: e.rif || "",
-        estudianteTelefono: e.telefono || "",
+        estudianteTelefono: getStudentPhone(e),
         estudianteInstitucion: e.institucion_educacional || "",
         estudianteOcupacion: e.ocupacion || "",
         estudianteProfesion: e.profesion || "",
         estudianteLugarTrabajo: e.lugar_trabajo || "",
-        estudianteEmail: e.email || "",
+        estudianteEmail: getStudentEmail(e),
         estudianteDireccion: e.direccion || "",
-        estudianteAlergias: e.alergico_a || "",
+        estudianteAlergias: getStudentAlergias(e),
         estudianteAntecedentes: e.antecedentes || "",
-        estudianteAlergiasEspecificadas: e.especificacion_antecedentes || "",
+        estudianteAlergiasEspecificadas: getStudentAlergiasEspecificadas(e),
         estudianteContactoEmergencia: e.nombre_emergencia || "",
         estudianteTelefonoContactoEmergencia: e.numero_emergencia || "",
 
         representanteNombre: e.nombre_representante || "",
         representanteCI: e.cedula_representante || "",
-        representanteRIF: e.rif_representante || "",
+        representanteRIF: getRepresentativeRif(e),
         representanteParentesco: e.parentesco || "",
         representanteTelefono: e.telefono_representante || "",
         representanteOcupacion: e.ocupacion_representante || "",
-        representanteProfesion: e.profesion_representante || "",
-        representanteLugarTrabajo: e.lugar_trabajo_representante || "",
-        representanteDireccion: e.direccion_representante || "",
-        representanteEmail: e.email_representante || "",
+        representanteProfesion: getRepresentativeProfession(e),
+        representanteLugarTrabajo: getRepresentativeWorkplace(e),
+        representanteDireccion: getRepresentativeAddress(e),
+        representanteEmail: getRepresentativeEmail(e),
 
-        instrumentos: e.instrumentos || "",
-        teoricas: e.teoricas || "",
-        otros: e.otros || "",
-        autorizacion: e.autorizacion || "",
+        instrumentos: getInstrumentSummary(e) || "",
+        teoricas: getTeoricasSummary(e) || "",
+        otros: getOtrosSummary(e) || "",
+        autorizacion: formatBoolean(e.autorizacion),
       }
 
       const blob = await pdf(<PDF data={body} />).toBlob()
@@ -138,97 +292,23 @@ export default function Administrator() {
 
   // ------------------------------------------------------------------
 
-  // Student registration handler
-  const handleRegistration = async (
-    e: ListaEsperaItem
-  ): Promise<{ message: string; id: number } | null> => {
-    try {
-      // Map the wait list data to match Laravel's Estudiante model fields
-      const estudianteData = {
-        nombre: e.nombre || "",
-        genero: e.genero || "",
-        cedula: e.cedula || "",
-        fecha_nacimiento: e.fecha_nacimiento || "",
-        correo_electronico: e.email || "",
-        direccion: e.direccion || "",
-        telefono_estudiantes: e.telefono || "",
-        rif: e.rif || "",
-        institucion_educacional: e.institucion_educacional || "",
-        ocupacion: e.ocupacion || "",
-        profesion: e.profesion || "",
-        lugar_trabajo: e.lugar_trabajo || "",
-        alergico_a: e.alergico_a || "",
-        antecedentes: e.antecedentes || "",
-        especificacion_antecedentes: e.especificacion_antecedentes || "",
-        nombre_emergencia: e.nombre_emergencia || "",
-        numero_emergencia: e.numero_emergencia || "",
-
-        nombre_representante: e.nombre_representante || "",
-        cedula_representante: e.cedula_representante || "",
-        parentesco: e.parentesco || "",
-        telefono_representante: e.telefono_representante || "",
-        ocupacion_representante: e.ocupacion_representante || "",
-        profesion_representante: e.profesion_representante || "",
-        lugar_trabajo_representante: e.lugar_trabajo_representante || "",
-        direccion_representante: e.direccion_representante || "",
-        rif_representante: e.rif_representante || "",
-        email_representante: e.email_representante || "",
-
-        instrumentos: e.instrumentos || "",
-        teoricas: e.teoricas || "",
-        otros: e.otros || "",
-        autorizacion:
-          e.autorizacion === "Sí" ||
-          e.autorizacion === "Si" ||
-          e.autorizacion === "1",
-      }
-
-      const response = await estudianteApi.create(estudianteData)
-
-      if (response.message && response.id) {
-        console.log("Estudiante registrado exitosamente con ID:", response.id)
-        return response
-      } else {
-        console.log("Error al registrar estudiante")
-        return null
-      }
-    } catch (error) {
-      console.error("Registration error:", error)
-      return null
-    }
-  }
-
   // Applicant acceptation handler
   const handleAcceptation = async (id: number) => {
     try {
       const student = students.find((s) => s.id === id) ?? null
 
       if (student) {
-        // First register the student
-        const studentResponse = await handleRegistration(student)
+        const response = await listaEsperaApi.accept(id)
 
-        if (studentResponse && studentResponse.id) {
-          // Create user account for the student using UserController
-          const userResponse = await userApi.createUser(studentResponse.id)
-
-          if (userResponse.message && userResponse.id) {
-            // Update their status in the wait list
-            const listResponse = await listaEsperaApi.update(id, 2) // 2 = accepted
-
-            if (listResponse.message) {
-              // Remove from local state
-              setStudents((prev) => prev.filter((s) => s.id !== id))
-              alert(
-                "Aplicante aceptado con éxito. Usuario creado automáticamente."
-              )
-            } else {
-              alert("Error al actualizar el estado del aplicante.")
-            }
-          } else {
-            alert("Error al crear la cuenta de usuario.")
-          }
+        if (response.message) {
+          setStudents((prev) => prev.filter((s) => s.id !== id))
+          alert(
+            `Aplicante aceptado con éxito${
+              student.nombre ? `: ${student.nombre}` : ""
+            }.`
+          )
         } else {
-          alert("Error al registrar el estudiante.")
+          alert("Error al aceptar al aplicante.")
         }
       } else {
         alert("Error. No se ha encontrado al aplicante.")
@@ -247,15 +327,18 @@ export default function Administrator() {
       const student = students.find((s) => s.id === id) ?? null
 
       if (student) {
-        // Update their status in the wait list
-        const response = await listaEsperaApi.update(id, 3) // 3 = rejected
+        const response = await listaEsperaApi.reject(id)
 
         if (response.message) {
           // Remove from local state
           setStudents((prev) => prev.filter((s) => s.id !== id))
-          alert("Aplicante rechazado con éxito.")
+          alert(
+            `Aplicante rechazado con éxito${
+              student.nombre ? `: ${student.nombre}` : ""
+            }.`
+          )
         } else {
-          alert("Error al actualizar el estado del aplicante.")
+          alert("Error al rechazar al aplicante.")
         }
       } else {
         alert("Error. No se ha encontrado al aplicante.")
@@ -346,56 +429,62 @@ export default function Administrator() {
                     </td>
                   </tr>
                 ) : (
-                  students.map((e) => (
-                    <tr key={e.id} className="hover:bg-gray-100">
-                      <td className="px-4 py-2 text-xs font-montserrat">
-                        {e.nombre}
-                      </td>
-                      <td className="px-4 py-2 text-xs font-montserrat">
-                        {e.fecha_nacimiento
-                          ? calculateAge(e.fecha_nacimiento)
-                          : "-"}
-                      </td>
-                      <td className="px-4 py-2 text-xs font-montserrat">
-                        {e.cedula || "—"}
-                      </td>
-                      <td className="px-4 py-2 text-xs font-montserrat">
-                        {e.instrumentos || "—"}
-                      </td>
-                      <td className="px-4 py-2 text-xs font-montserrat">
-                        {e.teoricas || "—"}
-                      </td>
-                      <td className="px-4 py-2 text-xs font-montserrat">
-                        {e.otros || "—"}
-                      </td>
-                      <td className="flex flex-row items-center justify-center gap-4 py-2">
-                        <button
-                          onClick={() => handleGeneratePDF(e)}
-                          aria-label="Ver planilla"
-                        >
-                          <Eye className="w-4 h-4 text-blue-500 hover:text-blue-700"></Eye>
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedStudent(e.id)
-                            setShowConfirmationModal(true)
-                          }}
-                          aria-label="Aprobar"
-                        >
-                          <Check className="w-4 h-4 text-green-500 hover:text-green-700"></Check>
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedStudent(e.id)
-                            setShowRejectionModal(true)
-                          }}
-                          aria-label="Rechazar"
-                        >
-                          <X className="w-4 h-4 text-red-500 hover:text-red-700"></X>
-                        </button>
-                      </td>
-                    </tr>
-                  ))
+                  students.map((e) => {
+                    const instrumentSummary = getInstrumentSummary(e)
+                    const teoricasSummary = getTeoricasSummary(e)
+                    const otrosSummary = getOtrosSummary(e)
+
+                    return (
+                      <tr key={e.id} className="hover:bg-gray-100">
+                        <td className="px-4 py-2 text-xs font-montserrat">
+                          {e.nombre}
+                        </td>
+                        <td className="px-4 py-2 text-xs font-montserrat">
+                          {e.fecha_nacimiento
+                            ? calculateAge(e.fecha_nacimiento)
+                            : "-"}
+                        </td>
+                        <td className="px-4 py-2 text-xs font-montserrat">
+                          {e.cedula || "—"}
+                        </td>
+                        <td className="px-4 py-2 text-xs font-montserrat">
+                          {instrumentSummary}
+                        </td>
+                        <td className="px-4 py-2 text-xs font-montserrat">
+                          {teoricasSummary}
+                        </td>
+                        <td className="px-4 py-2 text-xs font-montserrat">
+                          {otrosSummary}
+                        </td>
+                        <td className="flex flex-row items-center justify-center gap-4 py-2">
+                          <button
+                            onClick={() => handleGeneratePDF(e)}
+                            aria-label="Ver planilla"
+                          >
+                            <Eye className="w-4 h-4 text-blue-500 hover:text-blue-700"></Eye>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSelectedStudent(e.id)
+                              setShowConfirmationModal(true)
+                            }}
+                            aria-label="Aprobar"
+                          >
+                            <Check className="w-4 h-4 text-green-500 hover:text-green-700"></Check>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSelectedStudent(e.id)
+                              setShowRejectionModal(true)
+                            }}
+                            aria-label="Rechazar"
+                          >
+                            <X className="w-4 h-4 text-red-500 hover:text-red-700"></X>
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })
                 )}
               </tbody>
             </table>
