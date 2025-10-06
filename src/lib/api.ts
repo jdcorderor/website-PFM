@@ -60,16 +60,43 @@ export interface Estudiante {
   id_usuario?: number
   created_at?: string
   updated_at?: string
+  notas?: StudentNotas
 }
 
-export interface Nota {
-  nota_final: number
-  nivel_inicial: string
-  siguiente_nivel: string
-  materia: string
-  periodo: string
-  fecha_periodo: string
-  profesor: string
+export interface NotaCatedra {
+  id: number
+  estudiante_id: number
+  acta_id: number
+  previa: number | null
+  tecnico: number | null
+  final: number | null
+  definitiva: number | null
+  nivel: string | null
+  nivel_obtenido: string | null
+  catedra: string
+  profesor_nombre: string | null
+  profesor_cedula: string | null
+  estudiante?: string | null
+  cedula?: string | null
+}
+
+export interface NotaGrupal {
+  id: number
+  acta_id: number
+  estudiante_id: number
+  obras: Record<string, number>
+  definitiva: number | null
+  observacion: string | null
+  catedra: string
+  profesor_nombre: string | null
+  profesor_cedula: string | null
+  created_at?: string | null
+  updated_at?: string | null
+}
+
+export interface StudentNotas {
+  catedras: Record<string, NotaCatedra[]>
+  grupales: Record<string, NotaGrupal[]>
 }
 
 export interface Catedra {
@@ -214,15 +241,6 @@ export const authApi = {
 export const studentApi = {
   getProfile: async (): Promise<{ message: string; data: Estudiante }> => {
     return apiRequest(`/estudiante/perfil`)
-  },
-
-  getGrades: async (
-    studentId: number
-  ): Promise<{ message: string; data: Nota[] }> => {
-    return apiRequest("/estudiante/notas", {
-      method: "POST",
-      body: JSON.stringify({ id: studentId }),
-    })
   },
 
   generatePlanilla: async (studentData: any): Promise<Blob> => {
