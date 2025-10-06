@@ -55,10 +55,6 @@ export default function Allies() {
                     setTimeout(() => { setFirstVisible(true); }, 750);
                     setTimeout(() => { setSecondVisible(true); }, 1500);
                     setTimeout(() => { setThirdVisible(true); }, 2250);
-                } else {
-                    setFirstVisible(false);
-                    setSecondVisible(false);
-                    setThirdVisible(false);
                 }
             },
             { threshold: 0 }
@@ -80,7 +76,9 @@ export default function Allies() {
     useEffect(() => {
         const observer = new IntersectionObserver(
         ([entry]) => {
-            setGridVisible(entry.isIntersecting);
+            if (entry.isIntersecting) {
+                setGridVisible(true);
+            }
         },
         { threshold: 0 }
         );

@@ -12,12 +12,35 @@ export default function AboutUs() {
     useEffect(() => {
         const observer = new IntersectionObserver(
         ([entry]) => {
-            setSectionVisible(entry.isIntersecting);
+            if (entry.isIntersecting) {
+                setSectionVisible(true);
+            }
         },
         { threshold: 0.1 }
         );
         
         if (ref.current) observer.observe(ref.current);
+        return () => observer.disconnect();
+    }, []);
+
+    // ----------------------------------------------------------------
+
+    // Ref for counter
+    const statsRef = useRef(null);
+
+    // State variables for counter effect
+    const [statsVisible, setStatsVisible] = useState(false);
+
+    // Intersection observer
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+        ([entry]) => {
+            setStatsVisible(entry.isIntersecting);
+        },
+        { threshold: 0.1 }
+        );
+        
+        if (statsRef.current) observer.observe(statsRef.current);
         return () => observer.disconnect();
     }, []);
 
@@ -33,7 +56,9 @@ export default function AboutUs() {
     useEffect(() => {
         const observer = new IntersectionObserver(
         ([entry]) => {
-            setGridVisible(entry.isIntersecting);
+            if (entry.isIntersecting) {
+                setGridVisible(true);
+            }
         },
         { threshold: 0.1 }
         );
@@ -54,7 +79,9 @@ export default function AboutUs() {
     useEffect(() => {
         const observer = new IntersectionObserver(
         ([entry]) => {
-            setValuesVisible(entry.isIntersecting);
+            if (entry.isIntersecting) {
+                setValuesVisible(true);
+            }
         },
         { threshold: 0.2 }
         );
@@ -65,10 +92,10 @@ export default function AboutUs() {
 
     return (
         <section id="nosotros" ref={ref} className="flex flex-col w-full">
-            <section className="relative w-full min-h-110 md:min-h-screen py-24 md:py-36">
+            <section ref={statsRef} className="relative w-full min-h-110 md:min-h-screen py-24 md:py-36">
                 <div className="absolute inset-0 z-0 w-full bg-gradient-to-b from-[#4B0C0C] to-[#7A1F1F] border-y-6 border-white"></div>
 
-                <div className={`relative inset-0 z-10 flex flex-col w-[85vw] gap-8 mx-auto ${ sectionVisible ? "slide-from-bottom" : "opacity-0"}`}>
+                <div className={`relative inset-0 z-10 flex flex-col w-[85vw] gap-8 mx-auto ${ sectionVisible ? "slide-from-bottom" : "opacity-0" }`}>
                     <div className="flex flex-col gap-4">
                         <h2 className="text-4xl md:text-5xl font-montserrat text-white font-bold text-center">Nuestra trayectoria</h2>
                         <p className="text-lg md:text-xl font-montserrat text-white font-light text-center"><i>Un legado de cultura, tradición y pasión por la música sinfónica</i></p>
@@ -78,21 +105,21 @@ export default function AboutUs() {
                         <div className="flex flex-col items-center bg-transparent gap-2 md:gap-4">
                             <img src="/about/image1.png" alt="Academia Internacional de Música - Maestro José Calabrese" className="w-35 md:w-60 h-35 md:h-60 object-cover" />
                             <div className="flex flex-col justify-center items-center md:gap-1">
-                                <span className="text-4xl md:text-5xl font-montserrat text-white font-bold"><Counter target={300} suffix="+" visible={sectionVisible} /></span>
+                                <span className="text-4xl md:text-5xl font-montserrat text-white font-bold"><Counter target={300} suffix="+" visible={statsVisible} /></span>
                                 <p className="text-xl md:text-2xl font-montserrat text-white font-normal">Estudiantes</p>
                             </div>
                         </div>
                         <div className="flex flex-col items-center bg-transparent gap-2 md:gap-4">
                             <img src="/about/image2.png" alt="Academia Internacional de Música - Maestro José Calabrese" className="w-35 md:w-60 h-35 md:h-60 object-cover" />
                             <div className="flex flex-col justify-center items-center md:gap-1">
-                                <span className="text-4xl md:text-5xl font-montserrat text-white font-bold"><Counter target={30} suffix="+" visible={sectionVisible} /></span>
+                                <span className="text-4xl md:text-5xl font-montserrat text-white font-bold"><Counter target={30} suffix="+" visible={statsVisible} /></span>
                                 <p className="text-xl md:text-2xl font-montserrat text-white font-normal">Cátedras</p>
                             </div>
                         </div>
                         <div className="flex flex-col items-center bg-transparent gap-2 md:gap-4">
                             <img src="/about/image3.png" alt="Academia Internacional de Música - Maestro José Calabrese" className="w-35 md:w-60 h-35 md:h-60 object-cover" />
                             <div className="flex flex-col justify-center items-center md:gap-1">
-                                <span className="text-4xl md:text-5xl font-montserrat text-white font-bold"><Counter target={49} suffix="+" visible={sectionVisible} /></span>
+                                <span className="text-4xl md:text-5xl font-montserrat text-white font-bold"><Counter target={49} suffix="+" visible={statsVisible} /></span>
                                 <p className="text-xl md:text-2xl font-montserrat text-white font-normal">Años de historia</p>
                             </div>
                         </div>
