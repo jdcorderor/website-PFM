@@ -153,7 +153,7 @@ export default function Student() {
   return (
     <section id="student">
       <div className="absolute inset-0 z-0 w-full">
-        <img src="/background.png" className="w-full h-full" />
+        <img src="/background.png" className="w-full h-full fixed" />
       </div>
 
       <div className="flex flex-col md:w-[75%] py-8 md:py-16 mx-auto gap-8 md:gap-12 relative z-10">
@@ -299,7 +299,7 @@ export default function Student() {
               grupalEntries.map(([materia, registros]) => (
                 <div
                   key={materia}
-                  className="flex flex-col w-[85%] md:w-full items-center justify-center py-8 px-6 md:px-12 mx-auto gap-6 border border-gray-200 rounded-lg"
+                  className="flex flex-col w-[85%] md:w-full items-center justify-center py-8 px-6 md:px-12 mx-auto gap-6 border border-gray-200 rounded-lg bg-zinc-50"
                 >
                   <h3 className="text-lg md:text-xl font-montserrat text-gray-800 font-bold text-center">
                     Historial académico - Grupal: {materia}

@@ -352,7 +352,7 @@ export default function Administrator() {
   return (
     <section id="administrator">
       <div className="absolute inset-0 z-0 w-full">
-        <img src="/background.png" className="w-full h-full" />
+        <img src="/background.png" className="w-full h-full fixed" />
       </div>
 
       <div className="flex flex-col w-[90vw] md:w-[80vw] items-center justify-center py-16 gap-12 mx-auto relative z-10">
