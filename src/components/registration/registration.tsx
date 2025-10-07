@@ -122,7 +122,7 @@ export default function Registration() {
       if (
         confirm(
           "¿Desea añadir otro instrumento? Cantidad de instrumentos seleccionados: " +
-            instrumentos.length
+          instrumentos.length
         )
       ) {
         setInstrumentos([...instrumentos, newField])
@@ -140,7 +140,7 @@ export default function Registration() {
       if (
         confirm(
           "¿Desea añadir otra cátedra teórica? Cantidad de cátedras teóricas seleccionadas: " +
-            teoricas.length
+          teoricas.length
         )
       ) {
         setTeoricas([...teoricas, newField])
@@ -158,7 +158,7 @@ export default function Registration() {
       if (
         confirm(
           "¿Desea añadir otra cátedra complementaria? Cantidad de cátedras complementarias seleccionadas: " +
-            otros.length
+          otros.length
         )
       ) {
         setOtros([...otros, newField])
@@ -253,37 +253,30 @@ export default function Registration() {
       try {
         const response = await catedraApi.getAll()
 
-        if (response.data) {
-          const instrumentos: string[] = []
-          const teoricas: string[] = []
-          const otros: string[] = []
+        const instrumentos: string[] = []
+        const teoricas: string[] = []
+        const otros: string[] = []
 
-          // Process catedras from 'data' field
-          response.data.forEach((item: Catedra) => {
-            switch (item.tipo) {
-              case "instrumento":
-                instrumentos.push(item.nombre)
-                break
-              case "teorica":
-                teoricas.push(item.nombre)
-                break
-              case "grupal":
-                otros.push(item.nombre)
-                break
-            }
+        // Process grouped response
+        if (response.Instrumento) {
+          response.Instrumento.forEach((item: Catedra) => {
+            instrumentos.push(item.nombre)
           })
-
-          // Process grupales from 'grupales' field
-          if (response.grupales) {
-            response.grupales.forEach((grupal) => {
-              otros.push(grupal.nombre)
-            })
-          }
-
-          setListadoInstrumentos(instrumentos)
-          setListadoTeoricas(teoricas)
-          setListadoOtros(otros)
         }
+        if (response.Teoricas) {
+          response.Teoricas.forEach((item: Catedra) => {
+            teoricas.push(item.nombre)
+          })
+        }
+        if (response.Otros) {
+          response.Otros.forEach((item: Catedra) => {
+            otros.push(item.nombre)
+          })
+        }
+
+        setListadoInstrumentos(instrumentos)
+        setListadoTeoricas(teoricas)
+        setListadoOtros(otros)
       } catch (err) {
         console.error("Error al obtener cátedras:", err)
       }
@@ -340,8 +333,7 @@ export default function Registration() {
         photoURL: photo64 || "",
         estudianteNombre: estudianteNombre || "",
         estudianteFechaNacimiento:
-          `${estudianteFechaNacimiento?.split("-")[2]}/${
-            estudianteFechaNacimiento?.split("-")[1]
+          `${estudianteFechaNacimiento?.split("-")[2]}/${estudianteFechaNacimiento?.split("-")[1]
           }/${estudianteFechaNacimiento?.split("-")[0]}` || "",
         estudianteEdad: estudianteEdad || "",
         estudianteGenero: estudianteGenero || "",
@@ -396,7 +388,6 @@ export default function Registration() {
 
   // Student registration handler
   const handleRegistration = async (): Promise<void> => {
-    console.log("hello")
     try {
       const instrumentosData = instrumentos.map((item) => item.valor).join(", ")
       const teoricasData = teoricas.map((item) => item.valor).join(", ")
@@ -472,10 +463,9 @@ export default function Registration() {
   // Submission handler
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
     const form = e.currentTarget
     const studentRIFValidation = validateRIF(estudianteRIF || "")
-    const representativeRIFValidation = validateRIF(representanteRIF || "")
+    const representativeRIFValidation = esMenor ? true : validateRIF(representanteRIF || "")
 
     if (studentRIFValidation) {
       setRIFError(

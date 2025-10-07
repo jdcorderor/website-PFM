@@ -102,7 +102,17 @@ export interface StudentNotas {
 export interface Catedra {
   id: number
   nombre: string
-  tipo: string
+  tipo_id: number
+  tipo: {
+    id: number
+    nombre: string
+  }
+}
+
+export interface CatedrasGroupedResponse {
+  Instrumento?: Catedra[]
+  Otros?: Catedra[]
+  Teoricas?: Catedra[]
 }
 
 export interface AspiranteRequest {
@@ -435,13 +445,34 @@ export const listaEsperaApi = {
 
 // Subjects API calls
 export const catedraApi = {
-  getAll: async (): Promise<{
-    message: string
-    data: Catedra[]
-    grupales: { nombre: string; id: number }[]
-  }> => {
-    return apiRequest("/catedras")
+  getAll: async (): Promise<CatedrasGroupedResponse> => {
+    const response = await apiRequest<CatedrasGroupedResponse>("/catedras")
+    return response
   },
+
+  // Helper function to get all catedras as a flat array
+  getAllFlat: async (): Promise<Catedra[]> => {
+    const groupedResponse = await catedraApi.getAll()
+    const allCatedras: Catedra[] = []
+
+    if (groupedResponse.Instrumento) {
+      allCatedras.push(...groupedResponse.Instrumento)
+    }
+    if (groupedResponse.Otros) {
+      allCatedras.push(...groupedResponse.Otros)
+    }
+    if (groupedResponse.Teoricas) {
+      allCatedras.push(...groupedResponse.Teoricas)
+    }
+
+    return allCatedras
+  },
+
+  // Helper function to get catedras by type
+  getByType: async (tipo: 'Instrumento' | 'Otros' | 'Teoricas'): Promise<Catedra[]> => {
+    const groupedResponse = await catedraApi.getAll()
+    return groupedResponse[tipo] || []
+  }
 }
 
 // User creation API calls
