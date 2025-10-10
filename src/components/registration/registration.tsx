@@ -9,9 +9,9 @@ export default function Registration() {
     const [pendingValues, setPendingValues] = useState<RegistrationFormValues | null>(null);
 
     const hasFetched = useRef(false);
-    const [listadoInstrumentos, setListadoInstrumentos] = useState<string[]>([]);
-    const [listadoTeoricas, setListadoTeoricas] = useState<string[]>([]);
-    const [listadoOtros, setListadoOtros] = useState<string[]>([]);
+    const [listadoInstrumentos, setListadoInstrumentos] = useState<Catedra[]>([]);
+    const [listadoTeoricas, setListadoTeoricas] = useState<Catedra[]>([]);
+    const [listadoOtros, setListadoOtros] = useState<Catedra[]>([]);
 
     useEffect(() => {
         if (hasFetched.current) return;
@@ -20,31 +20,11 @@ export default function Registration() {
             try {
                 const response = await catedraApi.getAll();
 
-                const instrumentos: string[] = [];
-                const teoricas: string[] = [];
-                const otros: string[] = [];
+                console.log(response);
 
-                if (response.Instrumento) {
-                    response.Instrumento.forEach((item: Catedra) => {
-                        instrumentos.push(item.nombre);
-                    });
-                }
-
-                if (response.Teoricas) {
-                    response.Teoricas.forEach((item: Catedra) => {
-                        teoricas.push(item.nombre);
-                    });
-                }
-
-                if (response.Otros) {
-                    response.Otros.forEach((item: Catedra) => {
-                        otros.push(item.nombre);
-                    });
-                }
-
-                setListadoInstrumentos(instrumentos);
-                setListadoTeoricas(teoricas);
-                setListadoOtros(otros);
+                setListadoInstrumentos(response.Instrumento || []);
+                setListadoTeoricas(response.Teoricas || []);
+                setListadoOtros(response.Otros || []);
             } catch (error) {
                 console.error("Error al obtener cátedras:", error);
             }
@@ -54,11 +34,28 @@ export default function Registration() {
         hasFetched.current = true;
     }, []);
 
+    const toNumericArray = (list: Array<string | number | null | undefined>) =>
+        list
+            .map((value) => {
+                if (typeof value === "number") return value;
+                if (typeof value === "string" && value.trim() !== "") {
+                    const parsed = Number(value);
+                    return Number.isNaN(parsed) ? null : parsed;
+                }
+                return null;
+            })
+            .filter((value): value is number => value !== null);
+
+    const toNameArray = (ids: Array<string | number | null | undefined>, options: Catedra[]) =>
+        ids
+            .map((id) => options.find((option) => String(option.id) === String(id))?.nombre)
+            .filter((nombre): nombre is string => Boolean(nombre));
+
     const handleRegistration = async (values: RegistrationFormValues) => {
         try {
-            const instrumentosData = values.instrumentos.filter(Boolean).join(", ");
-            const teoricasData = values.teoricas.filter(Boolean).join(", ");
-            const otrosData = values.otros.filter(Boolean).join(", ");
+            const instrumentosIds = toNumericArray(values.instrumentos);
+            const teoricasIds = toNumericArray(values.teoricas);
+            const otrosIds = toNumericArray(values.otros);
 
             const aspiranteData: AspiranteRequest = {
                 nombre: values.estudianteNombre,
@@ -93,13 +90,15 @@ export default function Registration() {
                 rif_representante: values.representanteRIF ?? "",
                 email_representante: values.representanteEmail ?? "",
 
-                instrumentos: instrumentosData,
-                teoricas: teoricasData,
-                otros: otrosData,
                 autorizacion: values.autorizacion === "Sí",
+                catedra_instrumento: instrumentosIds,
+                catedra_teoricas: teoricasIds,
+                catedra_otros: otrosIds,
             };
 
             console.log(aspiranteData);
+
+            return;
 
             const response = await aspiranteApi.create(aspiranteData);
 
@@ -115,9 +114,18 @@ export default function Registration() {
     };
 
     const handleFormSubmit = async (values: RegistrationFormValues) => {
+        const instrumentosNames = toNameArray(values.instrumentos, listadoInstrumentos);
+        const teoricasNames = toNameArray(values.teoricas, listadoTeoricas);
+        const otrosNames = toNameArray(values.otros, listadoOtros);
+
         setPendingValues(values);
         setShowModal(true);
-        await downloadRegistrationPdf(values);
+        await downloadRegistrationPdf({
+            ...values,
+            instrumentos: instrumentosNames,
+            teoricas: teoricasNames,
+            otros: otrosNames,
+        });
     };
 
     return (
