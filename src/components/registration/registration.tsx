@@ -1,23 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { pdf } from "@react-pdf/renderer";
-
-import RegistrationForm, { type RegistrationFormValues } from "../forms/registration-form/RegistrationForm";
-import PDF from "../pdf/pdf";
 import { aspiranteApi, catedraApi, type AspiranteRequest, type Catedra } from "../../lib/api";
-
-const formatPhone = (code?: string, phone?: string) => {
-    if (code && phone) {
-        return `${code}${phone}`;
-    }
-    return "";
-};
-
-const formatDateForPdf = (value: string | undefined) => {
-    if (!value) return "";
-    const [year, month, day] = value.split("-");
-    if (!year || !month || !day) return value;
-    return `${day}/${month}/${year}`;
-};
+import { downloadRegistrationPdf, formatPhone } from "./pdfHandler";
+import type { RegistrationFormValues } from "../forms/registration-form";
+import RegistrationForm from "../forms/registration-form/RegistrationForm";
 
 export default function Registration() {
     const [showModal, setShowModal] = useState(false);
@@ -69,70 +54,6 @@ export default function Registration() {
         hasFetched.current = true;
     }, []);
 
-    const handleGeneratePDF = async (values: RegistrationFormValues) => {
-        try {
-            const instrumentosData = values.instrumentos.filter(Boolean).join(", ");
-            const teoricasData = values.teoricas.filter(Boolean).join(", ");
-            const otrosData = values.otros.filter(Boolean).join(", ");
-
-            const body = {
-                photoURL: values.photo64 ?? "",
-                estudianteNombre: values.estudianteNombre,
-                estudianteFechaNacimiento: formatDateForPdf(values.estudianteFechaNacimiento),
-                estudianteEdad: values.estudianteEdad ?? "",
-                estudianteGenero: values.estudianteGenero,
-                estudianteCI: values.estudianteCI ?? "",
-                estudianteRIF: values.estudianteRIF ?? "",
-                estudianteTelefono: formatPhone(values.estudianteCodigoTelefono, values.estudianteTelefono),
-                estudianteInstitucion: values.estudianteInstitucion ?? "",
-                estudianteOcupacion: values.estudianteOcupacion ?? "",
-                estudianteProfesion: values.estudianteProfesion ?? "",
-                estudianteLugarTrabajo: values.estudianteLugarTrabajo ?? "",
-                estudianteEmail: values.estudianteEmail,
-                estudianteDireccion: values.estudianteDireccion,
-                estudianteAlergias: values.estudianteAlergias,
-                estudianteAntecedentes: values.estudianteAntecedentes,
-                estudianteAlergiasEspecificadas: values.estudianteAlergiasEspecificadas ?? "",
-                estudianteContactoEmergencia: values.estudianteContactoEmergencia,
-                estudianteTelefonoContactoEmergencia: formatPhone(
-                    values.estudianteCodigoTelefonoEmergencia,
-                    values.estudianteTelefonoEmergencia
-                ),
-
-                representanteNombre: values.representanteNombre ?? "",
-                representanteCI: values.representanteCI ?? "",
-                representanteRIF: values.representanteRIF ?? "",
-                representanteParentesco: values.representanteParentesco ?? "",
-                representanteTelefono: formatPhone(values.representanteCodigoTelefono, values.representanteTelefono),
-                representanteOcupacion: values.representanteOcupacion ?? "",
-                representanteProfesion: values.representanteProfesion ?? "",
-                representanteLugarTrabajo: values.representanteLugarTrabajo ?? "",
-                representanteDireccion: values.representanteDireccion ?? "",
-                representanteEmail: values.representanteEmail ?? "",
-
-                instrumentos: instrumentosData,
-                teoricas: teoricasData,
-                otros: otrosData,
-                autorizacion: values.autorizacion,
-            };
-
-            const blob = await pdf(<PDF data={body} />).toBlob();
-            const url = URL.createObjectURL(blob);
-
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = `Planilla-${Date.now()}.pdf`;
-
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            URL.revokeObjectURL(url);
-        } catch (error) {
-            console.error("Error en la generación de PDF:", error);
-        }
-    };
-
     const handleRegistration = async (values: RegistrationFormValues) => {
         try {
             const instrumentosData = values.instrumentos.filter(Boolean).join(", ");
@@ -178,6 +99,8 @@ export default function Registration() {
                 autorizacion: values.autorizacion === "Sí",
             };
 
+            console.log(aspiranteData);
+
             const response = await aspiranteApi.create(aspiranteData);
 
             if (response.message && response.id) {
@@ -194,7 +117,7 @@ export default function Registration() {
     const handleFormSubmit = async (values: RegistrationFormValues) => {
         setPendingValues(values);
         setShowModal(true);
-        await handleGeneratePDF(values);
+        await downloadRegistrationPdf(values);
     };
 
     return (
