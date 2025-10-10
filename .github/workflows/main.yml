@@ -7,7 +7,9 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest,
+    env:
+      PUBLIC_PRODUCTION_API_URL: ${{ secrets.API_DOMAIN }}
 
     steps:
       - name: Checkout code
