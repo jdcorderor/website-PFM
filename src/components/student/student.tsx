@@ -1,26 +1,23 @@
-
 import { useState, useEffect } from "react"
-import { studentApi, type Estudiante, type Nota } from "../../lib/api"
+import {
+  studentApi,
+  type Estudiante,
+  type StudentNotas,
+  type NotaCatedra,
+  type NotaGrupal,
+} from "../../lib/api"
 
-// Function for grouping grades by subject
-function groupBySubject(notas: Nota[]): Record<string, Nota[]> {
-  return notas.reduce((acc, nota) => {
-    acc[nota.materia] = acc[nota.materia] || []
-    acc[nota.materia].push(nota)
-    return acc
-  }, {} as Record<string, Nota[]>)
-}
+const EMPTY_GRADES: StudentNotas = { catedras: {}, grupales: {} }
 
 export default function Student() {
   // State variable for student data
   const [student, setStudent] = useState<Estudiante | null>(null)
 
   // State variable for student's grades (grouped by subject)
-  const [grades, setGrades] = useState<Record<string, Nota[]> | null>(null)
+  const [grades, setGrades] = useState<StudentNotas | null>(null)
 
   // State variables for loading views management
   const [loadingStudent, setLoadingStudent] = useState(true)
-  const [loadingGrades, setLoadingGrades] = useState(false)
 
   // State variables for errors management
   const [studentError, setStudentError] = useState<string | null>(null)
@@ -33,6 +30,7 @@ export default function Student() {
     const fetchStudentData = async () => {
       try {
         setLoadingStudent(true)
+        setGradesError(null)
 
         // Get user data from localStorage (set during login)
         const userData = localStorage.getItem("user_data")
@@ -40,6 +38,7 @@ export default function Student() {
           setStudentError(
             "No se encontraron datos de usuario. Por favor, inicie sesión nuevamente."
           )
+          setGrades(EMPTY_GRADES)
           setLoadingStudent(false)
           return
         }
@@ -49,12 +48,17 @@ export default function Student() {
 
         if (response.data) {
           setStudent(response.data)
+          setGrades(response.data.notas ?? EMPTY_GRADES)
         } else {
           setStudentError("No se encontraron datos del estudiante.")
+          setGrades(EMPTY_GRADES)
+          setGradesError("No se encontraron notas del estudiante.")
         }
       } catch (error) {
         console.error("Error al cargar los datos del estudiante:", error)
         setStudentError("Error al cargar los datos del estudiante.")
+        setGrades(EMPTY_GRADES)
+        setGradesError("Error al cargar las notas del estudiante.")
       } finally {
         setLoadingStudent(false)
       }
@@ -63,43 +67,45 @@ export default function Student() {
     fetchStudentData()
   }, [])
 
-  // Get student's grades using fetch
-  useEffect(() => {
-    const fetchGrades = async () => {
-      try {
-        setLoadingGrades(true)
-
-        // Get user data from localStorage
-        const userData = localStorage.getItem("user_data")
-        if (!userData) {
-          setGradesError("No se encontraron datos de usuario.")
-          setLoadingGrades(false)
-          return
-        }
-
-        const user = JSON.parse(userData)
-        // Use the student ID from the user data
-        const studentId = user.id_estudiante || user.role.id
-        const response = await studentApi.getGrades(studentId)
-
-        if (response.data && Array.isArray(response.data)) {
-          const groupedGrades = groupBySubject(response.data)
-          setGrades(groupedGrades)
-        } else {
-          setGrades({})
-        }
-      } catch (error) {
-        console.error("Error al cargar las notas del estudiante:", error)
-        setGradesError("Error al cargar las notas del estudiante.")
-      } finally {
-        setLoadingGrades(false)
-      }
-    }
-
-    fetchGrades()
-  }, [])
-
   // ------------------------------------------------------
+
+  const hasCatedras = Object.keys(grades?.catedras ?? {}).length > 0
+  const hasGrupales = Object.keys(grades?.grupales ?? {}).length > 0
+
+  const catedraEntries = Object.entries(grades?.catedras ?? {}) as [
+    string,
+    NotaCatedra[]
+  ][]
+  const grupalEntries = Object.entries(grades?.grupales ?? {}) as [
+    string,
+    NotaGrupal[]
+  ][]
+
+  const formatProfessor = (
+    nombre?: string | null,
+    cedula?: string | null
+  ): string => {
+    if (!nombre && !cedula) return "No registrado"
+    if (!nombre) return cedula ?? "No registrado"
+    if (!cedula) return nombre
+    return `${nombre} (${cedula})`
+  }
+
+  const getObrasWithNotas = (
+    registro: NotaGrupal
+  ): Array<{ nombre: string; nota: number | string }> => {
+    const observaciones = (registro.observacion ?? "")
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean)
+    const keys = ["obra1", "obra2", "obra3"]
+
+    return keys.map((key, index) => {
+      const nombre = observaciones[index] || `Obra ${index + 1}`
+      const nota = registro.obras?.[key] ?? "N/A"
+      return { nombre, nota }
+    })
+  }
 
   // Alternative views
   if (loadingStudent) {
@@ -147,11 +153,11 @@ export default function Student() {
   return (
     <section id="student">
       <div className="absolute inset-0 z-0 w-full">
-        <img src="/background.png" className="w-full h-full" />
+        <img src="/background.png" className="w-full h-full fixed" />
       </div>
 
       <div className="flex flex-col md:w-[75%] py-8 md:py-16 mx-auto gap-8 md:gap-12 relative z-10">
-        <div className="flex flex-col w-full items-center py-8 gap-6 md:border border-gray-200 rounded-lg">
+        <div className="flex flex-col w-full items-center py-8 gap-6 md:border border-gray-200 rounded-lg bg-zinc-50">
           <h2 className="text-2xl font-montserrat text-gray-800 font-bold text-center w-[85%] md:w-[80%] pb-4 border-b border-gray-200">
             Información personal
           </h2>
@@ -201,76 +207,178 @@ export default function Student() {
         </div>
 
         {/* Historial académico */}
-        {loadingGrades ? (
-          <p className="text-lg font-montserrat text-gray-700 font-bold text-center w-full">
-            Cargando notas...
-          </p>
-        ) : gradesError ? (
+        {gradesError ? (
           <p className="text-lg font-montserrat text-red-500 font-bold text-center w-full">
             Error: {gradesError}
           </p>
-        ) : grades && Object.entries(grades).length > 0 ? (
-          Object.entries(grades).map(([materia, registros]) => (
-            <div
-              key={materia}
-              className="flex flex-col w-[85%] md:w-full items-center justify-center py-8 px-6 md:px-12 mx-auto gap-6 border border-gray-200 rounded-lg"
-            >
-              <h3 className="text-lg md:text-xl font-montserrat text-gray-800 font-bold text-center">
-                Historial académico: {materia}
-              </h3>
-              <div className="w-full overflow-x-auto max-h-[60vh]">
-                <table className="w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-100">
-                    <tr className="hover:bg-gray-50">
-                      <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
-                        Periodo
-                      </th>
-                      <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
-                        Profesor
-                      </th>
-                      <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
-                        Nivel inicial
-                      </th>
-                      <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
-                        Nota final
-                      </th>
-                      <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
-                        Siguiente nivel
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {registros.map((nota, i) => (
-                      <tr key={i} className="hover:bg-gray-50">
-                        <td className="px-4 py-2 text-xs font-montserrat">
-                          {nota.periodo}
-                        </td>
-                        <td className="px-4 py-2 text-xs font-montserrat">
-                          {nota.profesor}
-                        </td>
-                        <td className="px-4 py-2 text-xs font-montserrat">
-                          {nota.nivel_inicial}
-                        </td>
-                        <td className="px-4 py-2 text-xs font-montserrat">
-                          {nota.nota_final}
-                        </td>
-                        <td className="px-4 py-2 text-xs font-montserrat">
-                          {nota.siguiente_nivel}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          ))
+        ) : hasCatedras || hasGrupales ? (
+          <>
+            {hasCatedras &&
+              catedraEntries.map(([materia, registros]) => (
+                <div
+                  key={materia}
+                  className="flex flex-col w-[85%] md:w-full items-center justify-center py-8 px-6 md:px-12 mx-auto gap-6 border border-gray-200 rounded-lg bg-zinc-50"
+                >
+                  <h3 className="text-lg md:text-xl font-montserrat text-gray-800 font-bold text-center">
+                    Historial académico - Cátedra: {materia}
+                  </h3>
+                  <div className="w-full overflow-x-auto max-h-[60vh]">
+                    <table className="w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-100">
+                        <tr className="hover:bg-gray-50">
+                          <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
+                            Nivel cursado
+                          </th>
+                          <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
+                            Previa
+                          </th>
+                          <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
+                            Técnico
+                          </th>
+                          <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
+                            Final
+                          </th>
+                          <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
+                            Definitiva
+                          </th>
+                          <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
+                            Nivel obtenido
+                          </th>
+                          <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
+                            Profesor
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {registros.length > 0 ? (
+                          registros.map((registro) => (
+                            <tr key={registro.id} className="hover:bg-gray-50">
+                              <td className="px-4 py-2 text-xs font-montserrat">
+                                {registro.nivel ?? "No registrado"}
+                              </td>
+                              <td className="px-4 py-2 text-xs font-montserrat">
+                                {registro.previa ?? "N/A"}
+                              </td>
+                              <td className="px-4 py-2 text-xs font-montserrat">
+                                {registro.tecnico ?? "N/A"}
+                              </td>
+                              <td className="px-4 py-2 text-xs font-montserrat">
+                                {registro.final ?? "N/A"}
+                              </td>
+                              <td className="px-4 py-2 text-xs font-montserrat">
+                                {registro.definitiva ?? "N/A"}
+                              </td>
+                              <td className="px-4 py-2 text-xs font-montserrat">
+                                {registro.nivel_obtenido ?? "No registrado"}
+                              </td>
+                              <td className="px-4 py-2 text-xs font-montserrat">
+                                {formatProfessor(
+                                  registro.profesor_nombre,
+                                  registro.profesor_cedula
+                                )}
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td
+                              className="px-4 py-2 text-xs font-montserrat text-center"
+                              colSpan={7}
+                            >
+                              No hay registros para esta cátedra.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ))}
+
+            {hasGrupales &&
+              grupalEntries.map(([materia, registros]) => (
+                <div
+                  key={materia}
+                  className="flex flex-col w-[85%] md:w-full items-center justify-center py-8 px-6 md:px-12 mx-auto gap-6 border border-gray-200 rounded-lg bg-zinc-50"
+                >
+                  <h3 className="text-lg md:text-xl font-montserrat text-gray-800 font-bold text-center">
+                    Historial académico - Grupal: {materia}
+                  </h3>
+                  <div className="w-full overflow-x-auto max-h-[60vh]">
+                    <table className="w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-100">
+                        <tr className="hover:bg-gray-50">
+                          <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
+                            Obra 1
+                          </th>
+                          <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
+                            Obra 2
+                          </th>
+                          <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
+                            Obra 3
+                          </th>
+                          <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
+                            Definitiva
+                          </th>
+                          <th className="px-4 py-2 text-left text-xs font-montserrat text-gray-700 font-medium uppercase tracking-wider">
+                            Profesor
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {registros.length > 0 ? (
+                          registros.map((registro) => {
+                            const obras = getObrasWithNotas(registro)
+
+                            return (
+                              <tr
+                                key={registro.id}
+                                className="hover:bg-gray-50"
+                              >
+                                {obras.map((obra, index) => (
+                                  <td
+                                    key={`${registro.id}-obra-${index}`}
+                                    className="px-4 py-2 text-xs font-montserrat"
+                                  >
+                                    <span className="block font-semibold">
+                                      {obra.nombre}
+                                    </span>
+                                    <span>{obra.nota}</span>
+                                  </td>
+                                ))}
+                                <td className="px-4 py-2 text-xs font-montserrat">
+                                  {registro.definitiva ?? "N/A"}
+                                </td>
+                                <td className="px-4 py-2 text-xs font-montserrat">
+                                  {formatProfessor(
+                                    registro.profesor_nombre,
+                                    registro.profesor_cedula
+                                  )}
+                                </td>
+                              </tr>
+                            )
+                          })
+                        ) : (
+                          <tr>
+                            <td
+                              className="px-4 py-2 text-xs font-montserrat text-center"
+                              colSpan={5}
+                            >
+                              No hay registros grupales para esta cátedra.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ))}
+          </>
         ) : (
-          !loadingGrades && (
-            <p className="text-lg font-montserrat text-gray-700 font-bold text-center w-full">
-              Error: No hay notas disponibles para el estudiante{" "}
-              <b>{student?.nombre}.</b>
-            </p>
-          )
+          <p className="text-lg font-montserrat text-gray-700 font-bold text-center w-full">
+            No hay notas disponibles para el estudiante{" "}
+            <b>{student?.nombre}.</b>
+          </p>
         )}
       </div>
     </section>

@@ -60,22 +60,59 @@ export interface Estudiante {
   id_usuario?: number
   created_at?: string
   updated_at?: string
+  notas?: StudentNotas
 }
 
-export interface Nota {
-  nota_final: number
-  nivel_inicial: string
-  siguiente_nivel: string
-  materia: string
-  periodo: string
-  fecha_periodo: string
-  profesor: string
+export interface NotaCatedra {
+  id: number
+  estudiante_id: number
+  acta_id: number
+  previa: number | null
+  tecnico: number | null
+  final: number | null
+  definitiva: number | null
+  nivel: string | null
+  nivel_obtenido: string | null
+  catedra: string
+  profesor_nombre: string | null
+  profesor_cedula: string | null
+  estudiante?: string | null
+  cedula?: string | null
+}
+
+export interface NotaGrupal {
+  id: number
+  acta_id: number
+  estudiante_id: number
+  obras: Record<string, number>
+  definitiva: number | null
+  observacion: string | null
+  catedra: string
+  profesor_nombre: string | null
+  profesor_cedula: string | null
+  created_at?: string | null
+  updated_at?: string | null
+}
+
+export interface StudentNotas {
+  catedras: Record<string, NotaCatedra[]>
+  grupales: Record<string, NotaGrupal[]>
 }
 
 export interface Catedra {
   id: number
   nombre: string
-  tipo: string
+  tipo_id: number
+  tipo: {
+    id: number
+    nombre: string
+  }
+}
+
+export interface CatedrasGroupedResponse {
+  Instrumento?: Catedra[]
+  Otros?: Catedra[]
+  Teoricas?: Catedra[]
 }
 
 export interface AspiranteRequest {
@@ -216,15 +253,6 @@ export const studentApi = {
     return apiRequest(`/estudiante/perfil`)
   },
 
-  getGrades: async (
-    studentId: number
-  ): Promise<{ message: string; data: Nota[] }> => {
-    return apiRequest("/estudiante/notas", {
-      method: "POST",
-      body: JSON.stringify({ id: studentId }),
-    })
-  },
-
   generatePlanilla: async (studentData: any): Promise<Blob> => {
     const url = `${API_BASE_URL}/estudiante/generar-planilla`
     const token = getAuthToken()
@@ -315,75 +343,136 @@ export const estudianteApi = {
 }
 
 // Wait list interface matching your Laravel controller response
+export interface AspiranteCatedra {
+  id: number
+  tipo_id: number
+  nombre: string
+  created_at: string
+  updated_at: string
+  siglas: string | null
+  niveles: {
+    etapas: any[]
+    duracion: number
+  }
+  nivelesForNotas: string[]
+  hasPreparatorio: boolean
+  pivot: {
+    aspirante_id: number
+    catedra_id: number
+  }
+  tipo: {
+    id: number
+    nombre: string
+  }
+}
+
 export interface ListaEsperaItem {
   id: number
   nombre: string
-  fecha_nacimiento: string
-  genero: string
-  cedula: string
-  rif: string
-  telefono: string // mapped from telefono_estudiantes
-  institucion_educacional: string
-  ocupacion: string
-  profesion: string
-  lugar_trabajo: string
-  email: string // mapped from correo_electronico
-  direccion: string
-  alergico_a: string
-  antecedentes: string
-  especificacion_antecedentes: string
-  nombre_representante: string
-  cedula_representante: string
-  rif_representante: string
-  parentesco: string
-  telefono_representante: string
-  ocupacion_representante: string
-  profesion_representante: string
-  lugar_trabajo_representante: string
-  direccion_representante: string
-  email_representante: string
-  nombre_emergencia: string
-  numero_emergencia: string
-  instrumentos: string
-  teoricas: string
-  otros: string
-  autorizacion: string
-  estado: number
+  genero?: string | null
+  cedula?: string | null
+  fecha_nacimiento?: string | null
+  correo_electronico?: string | null
+  direccion?: string | null
+  fecha_ingreso?: string | null
+  instrumento?: string | null
+  codigo_instrumento?: string | null
+  nombre_representante?: string | null
+  ocupacion_representante?: string | null
+  parentesco?: string | null
+  cedula_representante?: string | null
+  telefono_estudiantes?: string | null
+  telefono_representante?: string | null
+  nombre_emergencia?: string | null
+  numero_emergencia?: string | null
+  activo?: boolean | number
+  photo_url?: string | null
+  edad?: string | number | null
+  rif?: string | null
+  institucion_educacional?: string | null
+  ocupacion?: string | null
+  profesion?: string | null
+  lugar_trabajo?: string | null
+  alergias?: string | null
+  antecedentes?: string | null
+  alergias_especificadas?: string | null
+  representante_rif?: string | null
+  representante_profesion?: string | null
+  representante_lugar_trabajo?: string | null
+  representante_direccion?: string | null
+  representante_email?: string | null
+  teoricas_data?: string | null
+  otros_data?: string | null
+  autorizacion?: boolean | string | null
+  created_at?: string | null
+  updated_at?: string | null
+  catedras?: AspiranteCatedra[]
+
+  // Campos legados para compatibilidad con implementaciones anteriores
+  telefono?: string | null
+  instrumentos?: string | null
+  teoricas?: string | null
+  otros?: string | null
+  alergico_a?: string | null
+  especificacion_antecedentes?: string | null
+  email?: string | null
+  direccion_representante?: string | null
+  email_representante?: string | null
+  rif_representante?: string | null
+  lugar_trabajo_representante?: string | null
+  profesion_representante?: string | null
+  estado?: number
 }
 
 // Wait list API calls
 export const listaEsperaApi = {
   getAll: async (): Promise<{ message: string; data: ListaEsperaItem[] }> => {
-    return apiRequest("/admin/lista-espera")
+    return apiRequest("/admin/aspirante")
   },
 
-  create: async (id_estudiante: number): Promise<{ message: string }> => {
-    return apiRequest("/admin/lista-espera", {
+  accept: async (studentId: number): Promise<{ message: string }> => {
+    return apiRequest(`/admin/aspirante/accept/${studentId}`, {
       method: "POST",
-      body: JSON.stringify({ id_estudiante }),
     })
   },
 
-  update: async (
-    studentId: number,
-    estado: number
-  ): Promise<{ message: string }> => {
-    return apiRequest(`/admin/lista-espera/${studentId}`, {
-      method: "PUT",
-      body: JSON.stringify({ estado }),
+  reject: async (studentId: number): Promise<{ message: string }> => {
+    return apiRequest(`/admin/aspirante/reject/${studentId}`, {
+      method: "DELETE",
     })
   },
 }
 
 // Subjects API calls
 export const catedraApi = {
-  getAll: async (): Promise<{
-    message: string
-    data: Catedra[]
-    grupales: { nombre: string; id: number }[]
-  }> => {
-    return apiRequest("/catedras")
+  getAll: async (): Promise<CatedrasGroupedResponse> => {
+    const response = await apiRequest<CatedrasGroupedResponse>("/catedras")
+    return response
   },
+
+  // Helper function to get all catedras as a flat array
+  getAllFlat: async (): Promise<Catedra[]> => {
+    const groupedResponse = await catedraApi.getAll()
+    const allCatedras: Catedra[] = []
+
+    if (groupedResponse.Instrumento) {
+      allCatedras.push(...groupedResponse.Instrumento)
+    }
+    if (groupedResponse.Otros) {
+      allCatedras.push(...groupedResponse.Otros)
+    }
+    if (groupedResponse.Teoricas) {
+      allCatedras.push(...groupedResponse.Teoricas)
+    }
+
+    return allCatedras
+  },
+
+  // Helper function to get catedras by type
+  getByType: async (tipo: 'Instrumento' | 'Otros' | 'Teoricas'): Promise<Catedra[]> => {
+    const groupedResponse = await catedraApi.getAll()
+    return groupedResponse[tipo] || []
+  }
 }
 
 // User creation API calls
