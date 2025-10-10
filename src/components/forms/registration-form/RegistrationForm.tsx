@@ -67,6 +67,7 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
         formState: { errors },
     } = useForm<RegistrationFormValues>({
         resolver: zodResolver(registrationSchema) as Resolver<RegistrationFormValues>,
+        mode: "onBlur",
         defaultValues: {
             instrumentos: [""],
             teoricas: [""],
@@ -300,7 +301,7 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
                     name="estudianteRIF"
                     control={control}
                     label="Registro de Información Fiscal (RIF)"
-                    placeholder="eg. V123456789"
+                    placeholder="ej. J-123456789"
                     maxLength={10}
                     error={errors.estudianteRIF}
                     wrapperClassName="w-full"
@@ -517,8 +518,8 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
                     name="representanteRIF"
                     control={control}
                     label={`Registro de Información Fiscal (RIF) ${isMinor ? "*" : ""}`.trim()}
-                    placeholder="eg. V123456789"
-                    maxLength={10}
+                    placeholder="eg. V-123456789"
+                    maxLength={11}
                     error={errors.representanteRIF}
                     wrapperClassName="w-full"
                 />
