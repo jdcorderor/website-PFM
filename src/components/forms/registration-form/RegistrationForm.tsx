@@ -1,30 +1,60 @@
-import { useEffect, useMemo } from "react";
-import { useForm, useFieldArray, type SubmitHandler } from "react-hook-form";
+import { useEffect, useMemo, useState } from "react";
+import { useForm, type Resolver, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registrationSchema, type RegistrationFormValues } from ".";
 import InputForm from "../components/Input";
 import PhotoInput from "./components/PhotoInput";
-import { ageFromBirthDate } from "../../../lib";
+import { ageFromBirthDate, type Catedra } from "../../../lib";
 
 interface RegistrationFormProps {
-    instrumentOptions: string[];
-    theoreticalOptions: string[];
-    otherOptions: string[];
+    instrumentOptions: Catedra[];
+    theoreticalOptions: Catedra[];
+    otherOptions: Catedra[];
     onSubmit: SubmitHandler<RegistrationFormValues>;
 }
 
-const getFilteredOptions = (options: string[], selected: string[] | undefined, currentValue: string | undefined) => {
-    const chosen = (selected ?? []).filter(Boolean);
-    const filtered = options.filter((option) => !chosen.includes(option));
+const getFilteredOptions = (
+    options: Catedra[],
+    selected: Array<string | number | null | undefined> | undefined,
+    currentValue: string | number | null | undefined
+) => {
+    const selectedIds = new Set((selected ?? []).filter(Boolean).map((value) => String(value)));
+    const filtered = options.filter((option) => !selectedIds.has(String(option.id)));
 
-    if (currentValue && !filtered.includes(currentValue)) {
-        return [currentValue, ...filtered];
+    if (currentValue !== undefined && currentValue !== null) {
+        const currentOption = options.find((option) => String(option.id) === String(currentValue));
+        if (currentOption && !filtered.some((option) => option.id === currentOption.id)) {
+            return [currentOption, ...filtered];
+        }
     }
 
     return filtered;
 };
 
 const phoneCodes = ["0412", "0422", "0414", "0424", "0416", "0426"];
+
+const toSelectionArray = (values?: Array<string | number | null | undefined>): (number | null)[] => {
+    const normalized = (values ?? []).map((value) => {
+        if (value === null || value === undefined || value === "") {
+            return null;
+        }
+
+        const parsed = Number(value);
+        return Number.isNaN(parsed) ? null : parsed;
+    });
+
+    return normalized.length ? normalized : [null];
+};
+
+const toFormValues = (selections: (number | null)[]): string[] => {
+    const ensured = selections.length ? selections : [null];
+    return ensured.map((value) => (value !== null && value !== undefined ? String(value) : ""));
+};
+
+const areSelectionArraysEqual = (a: (number | null)[], b: (number | null)[]) => {
+    if (a.length !== b.length) return false;
+    return a.every((value, index) => value === b[index]);
+};
 
 const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions, onSubmit }: RegistrationFormProps) => {
     const {
@@ -33,24 +63,31 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
         handleSubmit,
         watch,
         setValue,
+        getValues,
         formState: { errors },
     } = useForm<RegistrationFormValues>({
-        resolver: zodResolver(registrationSchema),
+        resolver: zodResolver(registrationSchema) as Resolver<RegistrationFormValues>,
+        mode: "onBlur",
+        defaultValues: {
+            instrumentos: [""],
+            teoricas: [""],
+            otros: [""],
+        },
     });
 
-    const instrumentosFieldArray = useFieldArray({
-        control,
-        name: "instrumentos",
-    });
-    const teoricasFieldArray = useFieldArray({
-        control,
-        name: "teoricas",
-    });
-    const otrosFieldArray = useFieldArray({
-        control,
-        name: "otros",
-    });
+    const [instrumentSelections, setInstrumentSelections] = useState<(number | null)[]>(() =>
+        toSelectionArray(getValues("instrumentos"))
+    );
+    const [theoreticalSelections, setTheoreticalSelections] = useState<(number | null)[]>(() =>
+        toSelectionArray(getValues("teoricas"))
+    );
+    const [otherSelections, setOtherSelections] = useState<(number | null)[]>(() =>
+        toSelectionArray(getValues("otros"))
+    );
 
+    const instrumentosValues = watch("instrumentos");
+    const teoricasValues = watch("teoricas");
+    const otrosValues = watch("otros");
     const fechaNacimiento = watch("estudianteFechaNacimiento");
     const isMinor = useMemo(() => {
         const age = ageFromBirthDate(fechaNacimiento);
@@ -62,9 +99,20 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
         setValue("estudianteEdad", age !== null ? String(age) : "");
     }, [fechaNacimiento, setValue]);
 
-    const selectedInstrumentos = watch("instrumentos");
-    const selectedTeoricas = watch("teoricas");
-    const selectedOtros = watch("otros");
+    useEffect(() => {
+        const normalized = toSelectionArray(instrumentosValues);
+        setInstrumentSelections((prev) => (areSelectionArraysEqual(prev, normalized) ? prev : normalized));
+    }, [instrumentosValues]);
+
+    useEffect(() => {
+        const normalized = toSelectionArray(teoricasValues);
+        setTheoreticalSelections((prev) => (areSelectionArraysEqual(prev, normalized) ? prev : normalized));
+    }, [teoricasValues]);
+
+    useEffect(() => {
+        const normalized = toSelectionArray(otrosValues);
+        setOtherSelections((prev) => (areSelectionArraysEqual(prev, normalized) ? prev : normalized));
+    }, [otrosValues]);
 
     const submitHandler: SubmitHandler<RegistrationFormValues> = (values, event) => {
         onSubmit(values, event);
@@ -76,45 +124,75 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
     };
 
     const handleAddInstrumento = () => {
-        if (instrumentosFieldArray.fields.length > 2) {
-            if (
-                confirmAppend(
-                    `¿Desea añadir otro instrumento? Cantidad de instrumentos seleccionados: ${instrumentosFieldArray.fields.length}`
-                )
-            ) {
-                instrumentosFieldArray.append("");
-            }
-        } else {
-            instrumentosFieldArray.append("");
-        }
+        const currentLength = instrumentSelections.length;
+        const shouldAppend =
+            currentLength > 2
+                ? confirmAppend(
+                      `¿Desea añadir otro instrumento? Cantidad de instrumentos seleccionados: ${currentLength}`
+                  )
+                : true;
+
+        if (!shouldAppend) return;
+
+        const nextSelections = [...instrumentSelections, null];
+        setInstrumentSelections(nextSelections);
+        setValue("instrumentos", toFormValues(nextSelections), { shouldDirty: true, shouldTouch: true });
     };
 
     const handleAddTeorica = () => {
-        if (teoricasFieldArray.fields.length > 2) {
-            if (
-                confirmAppend(
-                    `¿Desea añadir otra cátedra teórica? Cantidad de cátedras teóricas seleccionadas: ${teoricasFieldArray.fields.length}`
-                )
-            ) {
-                teoricasFieldArray.append("");
-            }
-        } else {
-            teoricasFieldArray.append("");
-        }
+        const currentLength = theoreticalSelections.length;
+        const shouldAppend =
+            currentLength > 2
+                ? confirmAppend(
+                      `¿Desea añadir otra cátedra teórica? Cantidad de cátedras teóricas seleccionadas: ${currentLength}`
+                  )
+                : true;
+
+        if (!shouldAppend) return;
+
+        const nextSelections = [...theoreticalSelections, null];
+        setTheoreticalSelections(nextSelections);
+        setValue("teoricas", toFormValues(nextSelections), { shouldDirty: true, shouldTouch: true });
     };
 
     const handleAddOtro = () => {
-        if (otrosFieldArray.fields.length > 2) {
-            if (
-                confirmAppend(
-                    `¿Desea añadir otra cátedra complementaria? Cantidad de cátedras complementarias seleccionadas: ${otrosFieldArray.fields.length}`
-                )
-            ) {
-                otrosFieldArray.append("");
-            }
-        } else {
-            otrosFieldArray.append("");
-        }
+        const currentLength = otherSelections.length;
+        const shouldAppend =
+            currentLength > 2
+                ? confirmAppend(
+                      `¿Desea añadir otra cátedra complementaria? Cantidad de cátedras complementarias seleccionadas: ${currentLength}`
+                  )
+                : true;
+
+        if (!shouldAppend) return;
+
+        const nextSelections = [...otherSelections, null];
+        setOtherSelections(nextSelections);
+        setValue("otros", toFormValues(nextSelections), { shouldDirty: true, shouldTouch: true });
+    };
+
+    const handleRemoveInstrumento = (index: number) => {
+        if (instrumentSelections.length <= 1) return;
+        const nextSelections = instrumentSelections.filter((_, idx) => idx !== index);
+        const normalized = nextSelections.length ? nextSelections : [null];
+        setInstrumentSelections(normalized);
+        setValue("instrumentos", toFormValues(normalized), { shouldDirty: true, shouldTouch: true });
+    };
+
+    const handleRemoveTeorica = (index: number) => {
+        if (theoreticalSelections.length <= 1) return;
+        const nextSelections = theoreticalSelections.filter((_, idx) => idx !== index);
+        const normalized = nextSelections.length ? nextSelections : [null];
+        setTheoreticalSelections(normalized);
+        setValue("teoricas", toFormValues(normalized), { shouldDirty: true, shouldTouch: true });
+    };
+
+    const handleRemoveOtro = (index: number) => {
+        if (otherSelections.length <= 1) return;
+        const nextSelections = otherSelections.filter((_, idx) => idx !== index);
+        const normalized = nextSelections.length ? nextSelections : [null];
+        setOtherSelections(normalized);
+        setValue("otros", toFormValues(normalized), { shouldDirty: true, shouldTouch: true });
     };
 
     return (
@@ -223,7 +301,7 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
                     name="estudianteRIF"
                     control={control}
                     label="Registro de Información Fiscal (RIF)"
-                    placeholder="eg. V123456789"
+                    placeholder="ej. J-123456789"
                     maxLength={10}
                     error={errors.estudianteRIF}
                     wrapperClassName="w-full"
@@ -440,8 +518,8 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
                     name="representanteRIF"
                     control={control}
                     label={`Registro de Información Fiscal (RIF) ${isMinor ? "*" : ""}`.trim()}
-                    placeholder="eg. V123456789"
-                    maxLength={10}
+                    placeholder="eg. V-123456789"
+                    maxLength={11}
                     error={errors.representanteRIF}
                     wrapperClassName="w-full"
                 />
@@ -460,20 +538,38 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
                 Cátedras a Inscribir
             </h3>
 
-            {instrumentosFieldArray.fields.map((field, index) => {
-                const currentValue = selectedInstrumentos?.[index];
+            {instrumentSelections.map((selection, index) => {
+                const fieldRegistration = register(`instrumentos.${index}` as const);
                 return (
-                    <div key={field.id} className="flex flex-col gap-1 w-full">
+                    <div key={`instrumento-${index}`} className="flex flex-col gap-1 w-full">
                         {index === 0 && <label className="font-montserrat text-sm">Instrumento(s)</label>}
                         <div className="flex gap-2">
-                            <select className="w-full" {...register(`instrumentos.${index}` as const)}>
+                            <select
+                                className="w-full"
+                                name={fieldRegistration.name}
+                                ref={fieldRegistration.ref}
+                                onBlur={fieldRegistration.onBlur}
+                                value={selection !== null ? String(selection) : ""}
+                                onChange={(event) => {
+                                    fieldRegistration.onChange(event);
+                                    const parsedValue = event.target.value === "" ? null : Number(event.target.value);
+                                    setInstrumentSelections((prev) => {
+                                        if (prev[index] === parsedValue) {
+                                            return prev;
+                                        }
+                                        const next = [...prev];
+                                        next[index] = parsedValue;
+                                        return next;
+                                    });
+                                }}
+                            >
                                 <option value="" disabled>
                                     Seleccione una opción
                                 </option>
-                                {getFilteredOptions(instrumentOptions, selectedInstrumentos, currentValue).map(
+                                {getFilteredOptions(instrumentOptions, instrumentSelections, selection).map(
                                     (option) => (
-                                        <option key={option} value={option}>
-                                            {option}
+                                        <option key={option.id} value={option.id}>
+                                            {option.nombre}
                                         </option>
                                     )
                                 )}
@@ -486,11 +582,11 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
                             >
                                 +
                             </button>
-                            {instrumentosFieldArray.fields.length > 1 && (
+                            {instrumentSelections.length > 1 && (
                                 <button
                                     type="button"
                                     title="Eliminar"
-                                    onClick={() => instrumentosFieldArray.remove(index)}
+                                    onClick={() => handleRemoveInstrumento(index)}
                                     className="w-8 h-8 text-white bg-gray-400 hover:bg-gray-500 rounded-lg text-[1.2rem] font-montserrat font-semibold shadow-sm transition duration-200"
                                 >
                                     -
@@ -501,20 +597,38 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
                 );
             })}
 
-            {teoricasFieldArray.fields.map((field, index) => {
-                const currentValue = selectedTeoricas?.[index];
+            {theoreticalSelections.map((selection, index) => {
+                const fieldRegistration = register(`teoricas.${index}` as const);
                 return (
-                    <div key={field.id} className="flex flex-col gap-1 w-full">
+                    <div key={`teorica-${index}`} className="flex flex-col gap-1 w-full">
                         {index === 0 && <label className="font-montserrat text-sm">Teóricas</label>}
                         <div className="flex gap-2">
-                            <select className="w-full" {...register(`teoricas.${index}` as const)}>
+                            <select
+                                className="w-full"
+                                name={fieldRegistration.name}
+                                ref={fieldRegistration.ref}
+                                onBlur={fieldRegistration.onBlur}
+                                value={selection !== null ? String(selection) : ""}
+                                onChange={(event) => {
+                                    fieldRegistration.onChange(event);
+                                    const parsedValue = event.target.value === "" ? null : Number(event.target.value);
+                                    setTheoreticalSelections((prev) => {
+                                        if (prev[index] === parsedValue) {
+                                            return prev;
+                                        }
+                                        const next = [...prev];
+                                        next[index] = parsedValue;
+                                        return next;
+                                    });
+                                }}
+                            >
                                 <option value="" disabled>
                                     Seleccione una opción
                                 </option>
-                                {getFilteredOptions(theoreticalOptions, selectedTeoricas, currentValue).map(
+                                {getFilteredOptions(theoreticalOptions, theoreticalSelections, selection).map(
                                     (option) => (
-                                        <option key={option} value={option}>
-                                            {option}
+                                        <option key={option.id} value={option.id}>
+                                            {option.nombre}
                                         </option>
                                     )
                                 )}
@@ -527,11 +641,11 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
                             >
                                 +
                             </button>
-                            {teoricasFieldArray.fields.length > 1 && (
+                            {theoreticalSelections.length > 1 && (
                                 <button
                                     type="button"
                                     title="Eliminar"
-                                    onClick={() => teoricasFieldArray.remove(index)}
+                                    onClick={() => handleRemoveTeorica(index)}
                                     className="w-8 h-8 text-white bg-gray-400 hover:bg-gray-500 rounded-lg text-[1.2rem] font-montserrat font-semibold shadow-sm transition duration-200"
                                 >
                                     -
@@ -542,19 +656,37 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
                 );
             })}
 
-            {otrosFieldArray.fields.map((field, index) => {
-                const currentValue = selectedOtros?.[index];
+            {otherSelections.map((selection, index) => {
+                const fieldRegistration = register(`otros.${index}` as const);
                 return (
-                    <div key={field.id} className="flex flex-col gap-1 w-full">
+                    <div key={`otro-${index}`} className="flex flex-col gap-1 w-full">
                         {index === 0 && <label className="font-montserrat text-sm">Otro(s)</label>}
                         <div className="flex gap-2">
-                            <select className="w-full" {...register(`otros.${index}` as const)}>
+                            <select
+                                className="w-full"
+                                name={fieldRegistration.name}
+                                ref={fieldRegistration.ref}
+                                onBlur={fieldRegistration.onBlur}
+                                value={selection !== null ? String(selection) : ""}
+                                onChange={(event) => {
+                                    fieldRegistration.onChange(event);
+                                    const parsedValue = event.target.value === "" ? null : Number(event.target.value);
+                                    setOtherSelections((prev) => {
+                                        if (prev[index] === parsedValue) {
+                                            return prev;
+                                        }
+                                        const next = [...prev];
+                                        next[index] = parsedValue;
+                                        return next;
+                                    });
+                                }}
+                            >
                                 <option value="" disabled>
                                     Seleccione una opción
                                 </option>
-                                {getFilteredOptions(otherOptions, selectedOtros, currentValue).map((option) => (
-                                    <option key={option} value={option}>
-                                        {option}
+                                {getFilteredOptions(otherOptions, otherSelections, selection).map((option) => (
+                                    <option key={option.id} value={option.id}>
+                                        {option.nombre}
                                     </option>
                                 ))}
                             </select>
@@ -566,11 +698,11 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
                             >
                                 +
                             </button>
-                            {otrosFieldArray.fields.length > 1 && (
+                            {otherSelections.length > 1 && (
                                 <button
                                     type="button"
                                     title="Eliminar"
-                                    onClick={() => otrosFieldArray.remove(index)}
+                                    onClick={() => handleRemoveOtro(index)}
                                     className="w-8 h-8 text-white bg-gray-400 hover:bg-gray-500 rounded-lg text-[1.2rem] font-montserrat font-semibold shadow-sm transition duration-200"
                                 >
                                     -
