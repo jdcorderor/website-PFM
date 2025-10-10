@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { ageFromBirthDate } from "../../../lib";
 
-const ciRegex = /^\d{6,8}$/;
+const ciRegex = /^\d{7,8}$/;
 const rifRegex = /^[JV]-\d{9}$/i;
 const phoneRegex = /^\d{7}$/;
 
@@ -9,7 +9,7 @@ export const registrationSchema = z
     .object({
         photo64: z.string().optional(),
 
-        estudianteNombre: z.string({ required_error: "Este campo es obligatorio" }).min(1, "Este campo es obligatorio"),
+        estudianteNombre: z.string({ required_error: "Este campo es obligatorio" }).min(4, "Este campo es obligatorio"),
         estudianteFechaNacimiento: z
             .string({ required_error: "Este campo es obligatorio" })
             .min(1, "Seleccione una fecha válida")
@@ -29,7 +29,7 @@ export const registrationSchema = z
             .string()
             .optional()
             .refine((val) => !val || ciRegex.test(val), {
-                message: "Debe tener entre 6 y 8 dígitos",
+                message: "Debe tener entre 7 y 8 dígitos",
             }),
         estudianteRIF: z
             .string()
@@ -81,7 +81,7 @@ export const registrationSchema = z
             .string()
             .optional()
             .refine((val) => !val || ciRegex.test(val), {
-                message: "Debe tener entre 6 y 8 dígitos",
+                message: "Debe tener entre 7 y 8 dígitos",
             }),
         representanteRIF: z
             .string()
@@ -113,7 +113,7 @@ export const registrationSchema = z
         otros: z.array(z.string()).default([""]),
 
         autorizacion: z
-            .string({ required_error: "Seleccione una opción" })
+            .string({ required_error: "Seleccione una opción", invalid_type_error: "Seleccione una opción" })
             .refine((val) => val === "Sí" || val === "No", {
                 message: "Seleccione una opción",
             }),
@@ -122,6 +122,12 @@ export const registrationSchema = z
         const age = ageFromBirthDate(data.estudianteFechaNacimiento);
 
         if (age === null) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Seleccione una fecha válida",
+                path: ["estudianteFechaNacimiento"],
+            });
+        } else if (age <= 3 || age >= 99) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: "Seleccione una fecha válida",

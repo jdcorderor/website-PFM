@@ -275,23 +275,16 @@ export const studentApi = {
 // Applicants API calls
 export const aspiranteApi = {
     getByIds: async (ids: number[]): Promise<{ message: string; data: any[] }> => {
-        return apiRequest("/aspirantes", {
+        return apiRequest("/aspirante", {
             method: "POST",
             body: JSON.stringify({ id: ids }),
         });
     },
 
     create: async (aspiranteData: AspiranteRequest): Promise<{ message: string; id: number }> => {
-        return apiRequest("/aspirantes", {
+        return apiRequest("/aspirante", {
             method: "POST",
             body: JSON.stringify(aspiranteData),
-        });
-    },
-
-    update: async (studentId: number, userId: number): Promise<{ message: string }> => {
-        return apiRequest("/aspirantes", {
-            method: "PUT",
-            body: JSON.stringify({ id: studentId, id_usuario: userId }),
         });
     },
 };

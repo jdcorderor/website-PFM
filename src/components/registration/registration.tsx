@@ -96,14 +96,11 @@ export default function Registration() {
                 catedra_otros: otrosIds,
             };
 
-            console.log(aspiranteData);
-
-            return;
-
             const response = await aspiranteApi.create(aspiranteData);
 
             if (response.message && response.id) {
                 alert("Inscripción enviada exitosamente. Será contactado pronto.");
+                window.location.href = "/";
             } else {
                 alert("Ha ocurrido un error. Por favor, intente nuevamente más tarde.");
             }
