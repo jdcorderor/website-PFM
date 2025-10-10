@@ -19,6 +19,7 @@ const InputForm = ({
     className,
     wrapperClassName,
     labelClassName,
+    ...rest
 }: Props) => {
     return (
         <div className={`flex flex-col gap-1 ${wrapperClassName ?? ""}`}>
@@ -32,6 +33,7 @@ const InputForm = ({
                 render={({ field }) => (
                     <input
                         {...field}
+                        {...rest}
                         type={type}
                         className={`border p-0 ${error && "border-red-500"} ${className ?? ""}`}
                     />
