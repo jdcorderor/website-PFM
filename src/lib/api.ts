@@ -142,6 +142,7 @@ export interface AspiranteRequest {
     catedra_instrumento?: number[];
     catedra_teoricas?: number[];
     catedra_otros?: number[];
+    imagen?: File | string;
 }
 
 // Utility function to get auth token - now uses session manager
@@ -171,9 +172,11 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
     const url = `${API_BASE_URL}${endpoint}`;
     const token = getAuthToken();
 
+    const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
+
     const defaultHeaders: HeadersInit = {
-        "Content-Type": "application/json",
         Accept: "application/json",
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
     };
 
     if (token) {
@@ -281,10 +284,10 @@ export const aspiranteApi = {
         });
     },
 
-    create: async (aspiranteData: AspiranteRequest): Promise<{ message: string; id: number }> => {
+    create: async (aspiranteData: FormData): Promise<{ message: string; id: number }> => {
         return apiRequest("/aspirante", {
             method: "POST",
-            body: JSON.stringify(aspiranteData),
+            body: aspiranteData,
         });
     },
 };

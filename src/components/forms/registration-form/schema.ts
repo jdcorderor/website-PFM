@@ -5,8 +5,18 @@ const ciRegex = /^\d{7,8}$/;
 const rifRegex = /^[JV]-\d{9}$/i;
 const phoneRegex = /^\d{7}$/;
 
+const imageField = z
+    .any({ required_error: "La foto es obligatoria" })
+    .refine((file) => file !== null && file !== undefined, {
+        message: "La foto es obligatoria",
+    })
+    .refine((file) => typeof File === "undefined" || file instanceof File, {
+        message: "Seleccione una imagen válida",
+    });
+
 export const registrationSchema = z
     .object({
+        imagen: imageField,
         photo64: z.string().optional(),
 
         estudianteNombre: z.string({ required_error: "Este campo es obligatorio" }).min(4, "Este campo es obligatorio"),
@@ -197,4 +207,8 @@ export const registrationSchema = z
         }
     });
 
-export type RegistrationFormValues = z.infer<typeof registrationSchema>;
+type RegistrationSchema = z.infer<typeof registrationSchema>;
+
+export type RegistrationFormValues = Omit<RegistrationSchema, "imagen"> & {
+    imagen: File | null;
+};

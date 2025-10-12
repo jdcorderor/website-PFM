@@ -69,6 +69,8 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
         resolver: zodResolver(registrationSchema) as Resolver<RegistrationFormValues>,
         mode: "onBlur",
         defaultValues: {
+            imagen: null,
+            photo64: "",
             instrumentos: [""],
             teoricas: [""],
             otros: [""],
@@ -204,7 +206,13 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
                 Datos del Estudiante
             </h3>
 
-            <PhotoInput control={control} name="photo64" />
+            <PhotoInput
+                control={control}
+                name="imagen"
+                onFileChange={({ preview }) => {
+                    setValue("photo64", preview ?? "", { shouldDirty: true, shouldTouch: true });
+                }}
+            />
 
             <InputForm
                 name="estudianteNombre"
