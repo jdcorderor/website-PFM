@@ -290,6 +290,24 @@ export const aspiranteApi = {
             body: aspiranteData,
         });
     },
+
+    downloadPdf: async (aspiranteId: number): Promise<any> => {
+        // return apiRequest(`/aspirante/planilla/${aspiranteId}`, { method: "GET" });
+        const url = `${API_BASE_URL}/aspirante/planilla/${aspiranteId}`;
+        const token = getAuthToken();
+
+        const headers: HeadersInit = {
+            Accept: "application/pdf",
+        };
+
+        return fetch(url, {
+            method: "GET",
+            headers: {
+                ...headers,
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+        });
+    },
 };
 
 // Students management API calls
