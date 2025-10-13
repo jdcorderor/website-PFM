@@ -191,6 +191,10 @@ export default function Administrator() {
         try {
             const response = await aspiranteApi.downloadPdf(id);
 
+            if (!response || !response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
             const file = response.blob() as Blob;
             const url = URL.createObjectURL(await file);
 
@@ -205,6 +209,7 @@ export default function Administrator() {
             URL.revokeObjectURL(url);
         } catch (error) {
             console.error("Error downloading PDF:", error);
+            alert("Error al descargar la planilla.");
         }
     };
 

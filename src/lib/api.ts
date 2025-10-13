@@ -293,7 +293,7 @@ export const aspiranteApi = {
 
     downloadPdf: async (aspiranteId: number): Promise<any> => {
         // return apiRequest(`/aspirante/planilla/${aspiranteId}`, { method: "GET" });
-        const url = `${API_BASE_URL}/aspirante/planilla/${aspiranteId}`;
+        const url = `${API_BASE_URL}/admin/aspirante/planilla/${aspiranteId}`;
         const token = getAuthToken();
 
         const headers: HeadersInit = {
