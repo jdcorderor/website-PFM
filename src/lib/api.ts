@@ -398,7 +398,6 @@ export interface ListaEsperaItem {
     autorizacion?: boolean | string | null;
     created_at?: string | null;
     updated_at?: string | null;
-    catedras?: AspiranteCatedra[];
 
     // Campos legados para compatibilidad con implementaciones anteriores
     telefono?: string | null;
@@ -414,6 +413,12 @@ export interface ListaEsperaItem {
     lugar_trabajo_representante?: string | null;
     profesion_representante?: string | null;
     estado?: number;
+
+    enrollments?: {
+        Instrumento: string[];
+        Teoricas: string[];
+        Otros: string[];
+    };
 }
 
 // Wait list API calls

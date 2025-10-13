@@ -34,114 +34,6 @@ const normalizeListString = (value?: string | null): string[] => {
         .filter(Boolean);
 };
 
-const extractCatedraNames = (catedras: ListaEsperaItem["catedras"], typeName: string): string[] => {
-    if (!catedras || !Array.isArray(catedras)) return [];
-
-    const normalizedType = typeName.toLowerCase();
-
-    return catedras
-        .filter((catedra) => (catedra?.tipo?.nombre ? catedra.tipo.nombre.toLowerCase() === normalizedType : false))
-        .map((catedra) => catedra.nombre)
-        .filter(Boolean);
-};
-
-const getInstrumentSummary = (aspirante: ListaEsperaItem): string => {
-    const values = [
-        ...normalizeListString(aspirante.instrumento as string | undefined),
-        ...normalizeListString(aspirante.instrumentos),
-        ...extractCatedraNames(aspirante.catedras, "Instrumento"),
-    ];
-
-    if (values.length === 0) return "—";
-
-    return Array.from(new Set(values)).join(", ");
-};
-
-const getTeoricasSummary = (aspirante: ListaEsperaItem): string => {
-    const values = [
-        ...normalizeListString(aspirante.teoricas_data ?? undefined),
-        ...normalizeListString(aspirante.teoricas),
-        ...extractCatedraNames(aspirante.catedras, "Teoricas"),
-    ];
-
-    if (values.length === 0) return "—";
-
-    return Array.from(new Set(values)).join(", ");
-};
-
-const formatDate = (value?: string | null): string => {
-    if (!value) return "";
-
-    const parsedDate = new Date(value);
-    if (Number.isNaN(parsedDate.getTime())) {
-        return value;
-    }
-
-    return parsedDate.toISOString().split("T")[0];
-};
-
-const formatBoolean = (value?: boolean | string | null): string => {
-    if (typeof value === "boolean") {
-        return value ? "Sí" : "No";
-    }
-
-    if (typeof value === "string") {
-        const normalized = value.trim().toLowerCase();
-        if (["1", "true", "si", "sí"].includes(normalized)) return "Sí";
-        if (["0", "false", "no"].includes(normalized)) return "No";
-    }
-
-    return "";
-};
-
-const getStudentPhone = (aspirante: ListaEsperaItem): string => {
-    return aspirante.telefono_estudiantes ?? (aspirante.telefono as string | undefined) ?? "";
-};
-
-const getStudentEmail = (aspirante: ListaEsperaItem): string => {
-    return aspirante.correo_electronico ?? aspirante.email ?? "";
-};
-
-const getRepresentativeEmail = (aspirante: ListaEsperaItem): string => {
-    return aspirante.representante_email ?? (aspirante.email_representante as string | undefined) ?? "";
-};
-
-const getRepresentativeAddress = (aspirante: ListaEsperaItem): string => {
-    return aspirante.representante_direccion ?? (aspirante.direccion_representante as string | undefined) ?? "";
-};
-
-const getRepresentativeRif = (aspirante: ListaEsperaItem): string => {
-    return aspirante.representante_rif ?? (aspirante.rif_representante as string | undefined) ?? "";
-};
-
-const getRepresentativeProfession = (aspirante: ListaEsperaItem): string => {
-    return aspirante.representante_profesion ?? (aspirante.profesion_representante as string | undefined) ?? "";
-};
-
-const getRepresentativeWorkplace = (aspirante: ListaEsperaItem): string => {
-    return aspirante.representante_lugar_trabajo ?? (aspirante.lugar_trabajo_representante as string | undefined) ?? "";
-};
-
-const getStudentAlergias = (aspirante: ListaEsperaItem): string => {
-    return aspirante.alergias ?? (aspirante.alergico_a as string | undefined) ?? "";
-};
-
-const getStudentAlergiasEspecificadas = (aspirante: ListaEsperaItem): string => {
-    return aspirante.alergias_especificadas ?? (aspirante.especificacion_antecedentes as string | undefined) ?? "";
-};
-
-const getOtrosSummary = (aspirante: ListaEsperaItem): string => {
-    const values = [
-        ...normalizeListString(aspirante.otros_data ?? undefined),
-        ...normalizeListString(aspirante.otros),
-        ...extractCatedraNames(aspirante.catedras, "Otros"),
-    ];
-
-    if (values.length === 0) return "—";
-
-    return Array.from(new Set(values)).join(", ");
-};
-
 export default function Administrator() {
     // State variable for students data
     const [students, setStudents] = useState<ListaEsperaItem[]>([]);
@@ -341,22 +233,24 @@ export default function Administrator() {
                                     </tr>
                                 ) : (
                                     students.map((e) => {
-                                        const instrumentSummary = getInstrumentSummary(e);
-                                        const teoricasSummary = getTeoricasSummary(e);
-                                        const otrosSummary = getOtrosSummary(e);
-
                                         return (
                                             <tr key={e.id} className="hover:bg-gray-100">
                                                 <td className="px-4 py-2 text-xs font-montserrat">{e.nombre}</td>
-                                                <td className="px-4 py-2 text-xs font-montserrat">
+                                                <td className="px-4 py-2 text-xs font-montserrat text-right">
                                                     {e.fecha_nacimiento ? calculateAge(e.fecha_nacimiento) : "-"}
                                                 </td>
-                                                <td className="px-4 py-2 text-xs font-montserrat">{e.cedula || "—"}</td>
-                                                <td className="px-4 py-2 text-xs font-montserrat">
-                                                    {instrumentSummary}
+                                                <td className="px-4 py-2 text-xs font-montserrat text-right">
+                                                    {e.cedula || "—"}
                                                 </td>
-                                                <td className="px-4 py-2 text-xs font-montserrat">{teoricasSummary}</td>
-                                                <td className="px-4 py-2 text-xs font-montserrat">{otrosSummary}</td>
+                                                <td className="px-4 py-2 text-xs font-montserrat">
+                                                    {e.enrollments?.Instrumento}
+                                                </td>
+                                                <td className="px-4 py-2 text-xs font-montserrat">
+                                                    {e.enrollments?.Teoricas}
+                                                </td>
+                                                <td className="px-4 py-2 text-xs font-montserrat">
+                                                    {e.enrollments?.Otros}
+                                                </td>
                                                 <td className="flex flex-row items-center justify-center gap-4 py-2">
                                                     <button
                                                         onClick={() => handleDownloadPDF(e.id)}
