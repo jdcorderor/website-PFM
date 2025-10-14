@@ -61,6 +61,8 @@ export interface Estudiante {
     created_at?: string;
     updated_at?: string;
     notas?: StudentNotas;
+
+    photo_url?: string | null;
 }
 
 export interface NotaCatedra {
