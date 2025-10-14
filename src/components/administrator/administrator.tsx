@@ -25,15 +25,6 @@ const calculateAge = (date?: string | null) => {
 
 // ------------------------------------------------------------------
 
-const normalizeListString = (value?: string | null): string[] => {
-    if (!value) return [];
-
-    return value
-        .split(/[,\n;]+/)
-        .map((item) => item.trim())
-        .filter(Boolean);
-};
-
 export default function Administrator() {
     // State variable for students data
     const [students, setStudents] = useState<ListaEsperaItem[]>([]);
@@ -83,22 +74,17 @@ export default function Administrator() {
         try {
             const response = await aspiranteApi.downloadPdf(id);
 
-            if (!response || !response.ok) {
+            if (!response || !response.message) {
                 throw new Error("Network response was not ok");
             }
 
-            const file = response.blob() as Blob;
-            const url = URL.createObjectURL(await file);
-
             const link = document.createElement("a");
-            link.href = url;
-            link.download = `Planilla-${Date.now()}.pdf`;
+            link.href = response.download_url;
+            link.download = `planilla_inscripcion.pdf`;
 
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-
-            URL.revokeObjectURL(url);
         } catch (error) {
             console.error("Error downloading PDF:", error);
             alert("Error al descargar la planilla.");

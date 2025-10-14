@@ -291,22 +291,8 @@ export const aspiranteApi = {
         });
     },
 
-    downloadPdf: async (aspiranteId: number): Promise<any> => {
-        // return apiRequest(`/aspirante/planilla/${aspiranteId}`, { method: "GET" });
-        const url = `${API_BASE_URL}/admin/aspirante/planilla/${aspiranteId}`;
-        const token = getAuthToken();
-
-        const headers: HeadersInit = {
-            Accept: "application/pdf",
-        };
-
-        return fetch(url, {
-            method: "GET",
-            headers: {
-                ...headers,
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-        });
+    downloadPdf: async (aspiranteId: number): Promise<{ message: string; download_url: string }> => {
+        return apiRequest(`/admin/aspirante/planilla/${aspiranteId}`, { method: "GET" });
     },
 };
 
