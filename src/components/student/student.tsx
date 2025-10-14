@@ -194,7 +194,7 @@ export default function Student() {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex flex-col gap-2">
+                        {/* <div className="flex flex-col gap-2">
                             <div className="text-sm font-montserrat text-gray-700">
                                 <b>Instrumento principal:</b>{" "}
                                 {student?.instrumentos ? student?.instrumentos : "No registrado"}
@@ -213,7 +213,7 @@ export default function Student() {
                             <div className="text-sm font-montserrat text-gray-700">
                                 <b>Estatus Académico:</b> {student?.activo === 1 ? "Activo" : "Inactivo"}
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 
