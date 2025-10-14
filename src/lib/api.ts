@@ -284,7 +284,7 @@ export const aspiranteApi = {
         });
     },
 
-    create: async (aspiranteData: FormData): Promise<{ message: string; id: number }> => {
+    create: async (aspiranteData: FormData): Promise<{ message: string; download_url: string }> => {
         return apiRequest("/aspirante", {
             method: "POST",
             body: aspiranteData,

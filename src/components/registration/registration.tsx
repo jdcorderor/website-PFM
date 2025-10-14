@@ -20,8 +20,6 @@ export default function Registration() {
             try {
                 const response = await catedraApi.getAll();
 
-                console.log(response);
-
                 setListadoInstrumentos(response.Instrumento || []);
                 setListadoTeoricas(response.Teoricas || []);
                 setListadoOtros(response.Otros || []);
@@ -45,11 +43,6 @@ export default function Registration() {
                 return null;
             })
             .filter((value): value is number => value !== null);
-
-    const toNameArray = (ids: Array<string | number | null | undefined>, options: Catedra[]) =>
-        ids
-            .map((id) => options.find((option) => String(option.id) === String(id))?.nombre)
-            .filter((nombre): nombre is string => Boolean(nombre));
 
     const handleRegistration = async (values: RegistrationFormValues) => {
         try {
@@ -112,7 +105,15 @@ export default function Registration() {
 
             const response = await aspiranteApi.create(formData);
 
-            if (response.message && response.id) {
+            if (response.message) {
+                const link = document.createElement("a");
+                link.href = response.download_url;
+                link.download = `planilla_inscripcion.pdf`;
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
                 alert("Inscripción enviada exitosamente. Será contactado pronto.");
                 window.location.href = "/";
             } else {
@@ -122,21 +123,6 @@ export default function Registration() {
             console.error("Registration error:", error);
             alert("Ha ocurrido un error. Por favor, intente nuevamente más tarde.");
         }
-    };
-
-    const handleFormSubmit = async (values: RegistrationFormValues) => {
-        const instrumentosNames = toNameArray(values.instrumentos, listadoInstrumentos);
-        const teoricasNames = toNameArray(values.teoricas, listadoTeoricas);
-        const otrosNames = toNameArray(values.otros, listadoOtros);
-
-        setPendingValues(values);
-        setShowModal(true);
-        await downloadRegistrationPdf({
-            ...values,
-            instrumentos: instrumentosNames,
-            teoricas: teoricasNames,
-            otros: otrosNames,
-        });
     };
 
     return (
@@ -173,7 +159,7 @@ export default function Registration() {
                     instrumentOptions={listadoInstrumentos}
                     theoreticalOptions={listadoTeoricas}
                     otherOptions={listadoOtros}
-                    onSubmit={handleFormSubmit}
+                    onSubmit={handleRegistration}
                 />
 
                 {showModal && pendingValues && (
