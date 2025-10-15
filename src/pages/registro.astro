@@ -5,6 +5,6 @@ import Registration from "../components/registration/registration";
 ---
 
 <Layout>
-    <Header client:load />
-    <Registration client:load />
+    <Header />
+    <Registration client:only="react" />
 </Layout>

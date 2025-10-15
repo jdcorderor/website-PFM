@@ -61,6 +61,8 @@ export interface Estudiante {
     created_at?: string;
     updated_at?: string;
     notas?: StudentNotas;
+
+    photo_url?: string | null;
 }
 
 export interface NotaCatedra {
@@ -142,6 +144,7 @@ export interface AspiranteRequest {
     catedra_instrumento?: number[];
     catedra_teoricas?: number[];
     catedra_otros?: number[];
+    imagen?: File | string;
 }
 
 // Utility function to get auth token - now uses session manager
@@ -171,9 +174,11 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
     const url = `${API_BASE_URL}${endpoint}`;
     const token = getAuthToken();
 
+    const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
+
     const defaultHeaders: HeadersInit = {
-        "Content-Type": "application/json",
         Accept: "application/json",
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
     };
 
     if (token) {
@@ -281,11 +286,15 @@ export const aspiranteApi = {
         });
     },
 
-    create: async (aspiranteData: AspiranteRequest): Promise<{ message: string; id: number }> => {
+    create: async (aspiranteData: FormData): Promise<{ message: string; download_url: string }> => {
         return apiRequest("/aspirante", {
             method: "POST",
-            body: JSON.stringify(aspiranteData),
+            body: aspiranteData,
         });
+    },
+
+    downloadPdf: async (aspiranteId: number): Promise<{ message: string; download_url: string }> => {
+        return apiRequest(`/admin/aspirante/planilla/${aspiranteId}`, { method: "GET" });
     },
 };
 
@@ -377,7 +386,6 @@ export interface ListaEsperaItem {
     autorizacion?: boolean | string | null;
     created_at?: string | null;
     updated_at?: string | null;
-    catedras?: AspiranteCatedra[];
 
     // Campos legados para compatibilidad con implementaciones anteriores
     telefono?: string | null;
@@ -393,6 +401,12 @@ export interface ListaEsperaItem {
     lugar_trabajo_representante?: string | null;
     profesion_representante?: string | null;
     estado?: number;
+
+    enrollments?: {
+        Instrumento: string[];
+        Teoricas: string[];
+        Otros: string[];
+    };
 }
 
 // Wait list API calls

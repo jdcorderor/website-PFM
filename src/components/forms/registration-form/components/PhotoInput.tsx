@@ -8,6 +8,7 @@ interface PhotoInputProps {
     label?: string;
     helperText?: string;
     wrapperClassName?: string;
+    onFileChange?: (value: { file: File | null; preview: string | null }) => void;
 }
 
 const DEFAULT_HELPER_TEXT = "La foto debe ser nítida, tipo carnet, fondo blanco, tamaño 3x4 cm. Formato JPG o PNG.";
@@ -18,6 +19,7 @@ const PhotoInput = ({
     label = "Subir foto",
     helperText = DEFAULT_HELPER_TEXT,
     wrapperClassName = "flex flex-col items-center justify-center w-[40%] gap-4 mb-4 imagen",
+    onFileChange,
 }: PhotoInputProps) => {
     const inputId = useId();
     const {
@@ -30,9 +32,22 @@ const PhotoInput = ({
     useEffect(() => {
         if (typeof value === "string" && value.length > 0) {
             setPreviewURL(value);
-        } else {
-            setPreviewURL(null);
+            return;
         }
+
+        if (value instanceof File) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                const result = typeof reader.result === "string" ? reader.result : null;
+                setPreviewURL(result);
+            };
+            reader.readAsDataURL(value);
+            return () => {
+                reader.abort();
+            };
+        }
+
+        setPreviewURL(null);
     }, [value]);
 
     const handlePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -40,15 +55,17 @@ const PhotoInput = ({
 
         if (!file) {
             setPreviewURL(null);
-            onChange("");
+            onChange(null);
+            onFileChange?.({ file: null, preview: null });
             return;
         }
 
+        onChange(file);
         const reader = new FileReader();
         reader.onloadend = () => {
-            const result = reader.result as string;
+            const result = typeof reader.result === "string" ? reader.result : null;
             setPreviewURL(result);
-            onChange(result);
+            onFileChange?.({ file, preview: result });
         };
         reader.readAsDataURL(file);
 

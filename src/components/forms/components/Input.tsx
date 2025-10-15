@@ -30,9 +30,11 @@ const InputForm = ({
             <Controller
                 name={name}
                 control={control}
+                defaultValue={""}
                 render={({ field }) => (
                     <input
                         {...field}
+                        value={field.value ?? ""}
                         {...rest}
                         type={type}
                         className={`border p-0 ${error && "border-red-500"} ${className ?? ""}`}

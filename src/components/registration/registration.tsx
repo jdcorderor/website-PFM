@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { aspiranteApi, catedraApi, type AspiranteRequest, type Catedra } from "../../lib/api";
+import { aspiranteApi, catedraApi, type Catedra } from "../../lib/api";
 import { downloadRegistrationPdf, formatPhone } from "./pdfHandler";
 import type { RegistrationFormValues } from "../forms/registration-form";
 import RegistrationForm from "../forms/registration-form/RegistrationForm";
@@ -19,8 +19,6 @@ export default function Registration() {
         const fetchSubjects = async () => {
             try {
                 const response = await catedraApi.getAll();
-
-                console.log(response);
 
                 setListadoInstrumentos(response.Instrumento || []);
                 setListadoTeoricas(response.Teoricas || []);
@@ -46,59 +44,76 @@ export default function Registration() {
             })
             .filter((value): value is number => value !== null);
 
-    const toNameArray = (ids: Array<string | number | null | undefined>, options: Catedra[]) =>
-        ids
-            .map((id) => options.find((option) => String(option.id) === String(id))?.nombre)
-            .filter((nombre): nombre is string => Boolean(nombre));
-
     const handleRegistration = async (values: RegistrationFormValues) => {
         try {
             const instrumentosIds = toNumericArray(values.instrumentos);
             const teoricasIds = toNumericArray(values.teoricas);
             const otrosIds = toNumericArray(values.otros);
 
-            const aspiranteData: AspiranteRequest = {
-                nombre: values.estudianteNombre,
-                genero: values.estudianteGenero,
-                cedula: values.estudianteCI ?? "",
-                fecha_nacimiento: values.estudianteFechaNacimiento,
-                correo_electronico: values.estudianteEmail,
-                direccion: values.estudianteDireccion,
-                telefono_estudiantes: formatPhone(values.estudianteCodigoTelefono, values.estudianteTelefono),
-                rif: values.estudianteRIF ?? "",
-                institucion_educacional: values.estudianteInstitucion ?? "",
-                ocupacion: values.estudianteOcupacion ?? "",
-                profesion: values.estudianteProfesion ?? "",
-                lugar_trabajo: values.estudianteLugarTrabajo ?? "",
-                alergico_a: values.estudianteAlergias ?? "",
-                antecedentes: values.estudianteAntecedentes ?? "",
-                especificacion_antecedentes: values.estudianteAlergiasEspecificadas ?? "",
-                nombre_emergencia: values.estudianteContactoEmergencia ?? "",
-                numero_emergencia: formatPhone(
-                    values.estudianteCodigoTelefonoEmergencia,
-                    values.estudianteTelefonoEmergencia
-                ),
+            if (!(values.imagen instanceof File)) {
+                alert("Debe adjuntar una imagen válida antes de continuar.");
+                return;
+            }
 
-                nombre_representante: values.representanteNombre ?? "",
-                cedula_representante: values.representanteCI ?? "",
-                parentesco: values.representanteParentesco ?? "",
-                telefono_representante: formatPhone(values.representanteCodigoTelefono, values.representanteTelefono),
-                ocupacion_representante: values.representanteOcupacion ?? "",
-                profesion_representante: values.representanteProfesion ?? "",
-                lugar_trabajo_representante: values.representanteLugarTrabajo ?? "",
-                direccion_representante: values.representanteDireccion ?? "",
-                rif_representante: values.representanteRIF ?? "",
-                email_representante: values.representanteEmail ?? "",
+            const formData = new FormData();
 
-                autorizacion: values.autorizacion === "Sí",
-                catedra_instrumento: instrumentosIds,
-                catedra_teoricas: teoricasIds,
-                catedra_otros: otrosIds,
-            };
+            formData.append("nombre", values.estudianteNombre);
+            formData.append("genero", values.estudianteGenero);
+            formData.append("cedula", values.estudianteCI ?? "");
+            formData.append("fecha_nacimiento", values.estudianteFechaNacimiento ?? "");
+            formData.append("correo_electronico", values.estudianteEmail);
+            formData.append("direccion", values.estudianteDireccion ?? "");
+            formData.append(
+                "telefono_estudiantes",
+                formatPhone(values.estudianteCodigoTelefono, values.estudianteTelefono)
+            );
+            formData.append("rif", values.estudianteRIF ?? "");
+            formData.append("institucion_educacional", values.estudianteInstitucion ?? "");
+            formData.append("ocupacion", values.estudianteOcupacion ?? "");
+            formData.append("profesion", values.estudianteProfesion ?? "");
+            formData.append("lugar_trabajo", values.estudianteLugarTrabajo ?? "");
+            formData.append("alergico_a", values.estudianteAlergias ?? "");
+            formData.append("antecedentes", values.estudianteAntecedentes ?? "");
+            formData.append("especificacion_antecedentes", values.estudianteAlergiasEspecificadas ?? "");
+            formData.append("nombre_emergencia", values.estudianteContactoEmergencia ?? "");
+            formData.append(
+                "numero_emergencia",
+                formatPhone(values.estudianteCodigoTelefonoEmergencia, values.estudianteTelefonoEmergencia)
+            );
 
-            const response = await aspiranteApi.create(aspiranteData);
+            formData.append("nombre_representante", values.representanteNombre ?? "");
+            formData.append("cedula_representante", values.representanteCI ?? "");
+            formData.append("parentesco", values.representanteParentesco ?? "");
+            formData.append(
+                "telefono_representante",
+                formatPhone(values.representanteCodigoTelefono, values.representanteTelefono)
+            );
+            formData.append("ocupacion_representante", values.representanteOcupacion ?? "");
+            formData.append("profesion_representante", values.representanteProfesion ?? "");
+            formData.append("lugar_trabajo_representante", values.representanteLugarTrabajo ?? "");
+            formData.append("direccion_representante", values.representanteDireccion ?? "");
+            formData.append("rif_representante", values.representanteRIF ?? "");
+            formData.append("email_representante", values.representanteEmail ?? "");
 
-            if (response.message && response.id) {
+            formData.append("autorizacion", values.autorizacion === "Sí" ? "1" : "0");
+
+            instrumentosIds.forEach((id) => formData.append("catedra_instrumento[]", id.toString()));
+            teoricasIds.forEach((id) => formData.append("catedra_teoricas[]", id.toString()));
+            otrosIds.forEach((id) => formData.append("catedra_otros[]", id.toString()));
+
+            formData.append("imagen", values.imagen, values.imagen.name);
+
+            const response = await aspiranteApi.create(formData);
+
+            if (response.message) {
+                const link = document.createElement("a");
+                link.href = response.download_url;
+                link.download = `planilla_inscripcion.pdf`;
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
                 alert("Inscripción enviada exitosamente. Será contactado pronto.");
                 window.location.href = "/";
             } else {
@@ -108,21 +123,6 @@ export default function Registration() {
             console.error("Registration error:", error);
             alert("Ha ocurrido un error. Por favor, intente nuevamente más tarde.");
         }
-    };
-
-    const handleFormSubmit = async (values: RegistrationFormValues) => {
-        const instrumentosNames = toNameArray(values.instrumentos, listadoInstrumentos);
-        const teoricasNames = toNameArray(values.teoricas, listadoTeoricas);
-        const otrosNames = toNameArray(values.otros, listadoOtros);
-
-        setPendingValues(values);
-        setShowModal(true);
-        await downloadRegistrationPdf({
-            ...values,
-            instrumentos: instrumentosNames,
-            teoricas: teoricasNames,
-            otros: otrosNames,
-        });
     };
 
     return (
@@ -159,7 +159,7 @@ export default function Registration() {
                     instrumentOptions={listadoInstrumentos}
                     theoreticalOptions={listadoTeoricas}
                     otherOptions={listadoOtros}
-                    onSubmit={handleFormSubmit}
+                    onSubmit={handleRegistration}
                 />
 
                 {showModal && pendingValues && (
