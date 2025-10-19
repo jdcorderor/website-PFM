@@ -7,7 +7,7 @@ export interface ApiResponse<T> {
 }
 
 export interface LoginRequest {
-    username: string;
+    credential: string;
     password: string;
 }
 
