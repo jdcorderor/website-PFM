@@ -310,7 +310,7 @@ const RegistrationForm = ({ instrumentOptions, theoreticalOptions, otherOptions,
                     control={control}
                     label="Registro de Información Fiscal (RIF)"
                     placeholder="ej. J-123456789"
-                    maxLength={10}
+                    maxLength={11}
                     error={errors.estudianteRIF}
                     wrapperClassName="w-full"
                 />

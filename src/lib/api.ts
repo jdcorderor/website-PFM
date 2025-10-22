@@ -7,7 +7,7 @@ export interface ApiResponse<T> {
 }
 
 export interface LoginRequest {
-    username: string;
+    credential: string;
     password: string;
 }
 
@@ -21,6 +21,21 @@ export interface CreateUserRequest {
     email: string;
     password: string;
     password_confirmation: string;
+}
+
+export interface ResetPasswordRequest {
+    email: string;
+    password: string;
+    password_confirmation: string;
+    token: string;
+}
+
+export interface ResetPasswordResponse {
+    message: string;
+}
+
+export interface RequestPasswordResetPayload {
+    email: string;
 }
 
 export interface Estudiante {
@@ -241,6 +256,20 @@ export const authApi = {
 
     getCurrentUser: async (): Promise<any> => {
         return apiRequest("/estudiante/user");
+    },
+
+    resetPassword: async (payload: ResetPasswordRequest): Promise<ResetPasswordResponse> => {
+        return apiRequest<ResetPasswordResponse>("/password/reset-password", {
+            method: "POST",
+            body: JSON.stringify(payload),
+        });
+    },
+
+    requestPasswordReset: async (payload: RequestPasswordResetPayload): Promise<{ message: string }> => {
+        return apiRequest<{ message: string }>("/password/reset-link", {
+            method: "POST",
+            body: JSON.stringify(payload),
+        });
     },
 };
 
